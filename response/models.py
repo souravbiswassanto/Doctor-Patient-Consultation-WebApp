@@ -14,6 +14,7 @@ class Response(models.Model):
             ('Pending', 'Pending'),
         )
     responseid = models.AutoField
+    #chek
     doctorack = models.CharField(max_length= 30, blank = True, null = True, choices= ack)
     userack = models.CharField(max_length= 30, blank = True, null = True, choices= ack1)
     patientid = models.CharField(max_length= 30, blank = True, null = True)
