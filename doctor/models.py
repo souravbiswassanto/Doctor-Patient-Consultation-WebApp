@@ -1,6 +1,7 @@
 
 # Create your models here.
 from django.db import models
+from django.utils.safestring import mark_safe
 # Create your models here.
 
 class Doctordata(models.Model):
@@ -38,34 +39,34 @@ class Doctordata(models.Model):
     def __str__(self):
         return self.name
     
-    # def image_tag(self):
-    #     if self.image:
-    #         return mark_safe('<img src="{}" height="70" width="60" />'.format(self.image.url))
-    # image_tag.short_description = 'Image'
+    def image_tag(self):
+        if self.image:
+            return mark_safe('<img src="{}" height="70" width="60" />'.format(self.image.url))
+    image_tag.short_description = 'Image'
 
-    # def imageurl(self):
-    #     if self.image:
-    #         return self.image.url
-    #     else:
-    #         return ""
+    def imageurl(self):
+        if self.image:
+            return self.image.url
+        else:
+            return ""
 
 
-# # class Activedoctor(models.Model):
-# #     activeid = models.AutoField
-# #     doctorid = models.ForeignKey(Doctordata, on_delete=models.CASCADE)
+class Activedoctor(models.Model):
+    activeid = models.AutoField
+    doctorid = models.ForeignKey(Doctordata, on_delete=models.CASCADE)
     
     
-# #     def __str__(self):
-# #         return self.doctorid.name
+    def __str__(self):
+        return self.doctorid.name
     
-# # class Spamreport(models.Model):
-# #     reportid = models.AutoField
-# #     doctorid = models.ForeignKey(Doctordata, on_delete=models.CASCADE)
-# #     userid = models.CharField(max_length= 200, blank = True, null = True)
-# #     reason = models.TextField(blank = True, null = True)
-# #     spamcount = models.IntegerField(null = True)
+class Spamreport(models.Model):
+    reportid = models.AutoField
+    doctorid = models.ForeignKey(Doctordata, on_delete=models.CASCADE)
+    userid = models.CharField(max_length= 200, blank = True, null = True)
+    reason = models.TextField(blank = True, null = True)
+    spamcount = models.IntegerField(null = True)
     
-# # class Blockeduser(models.Model):
-# #     blockid = models.AutoField
-# #     blockuserid = models.CharField(max_length = 30, null = True, blank = True)
+class Blockeduser(models.Model):
+    blockid = models.AutoField
+    blockuserid = models.CharField(max_length = 30, null = True, blank = True)
     
