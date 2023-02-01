@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'request',
     'response',
     'phone_field',
+    'meeting',
 ]
 
 MIDDLEWARE = [
