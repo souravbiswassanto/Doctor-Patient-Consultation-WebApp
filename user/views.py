@@ -24,3 +24,11 @@ def form(request):
             Userdata.save(commit=True)
             return home(request)
     return render(request, 'user/form.html', context=dict)
+
+def createpatient(request):
+    patient = forms.Patientform
+    dict = {
+        'patient' : patient,
+    }
+    if (request.method == 'POST'):
+        patient = forms.Patientform(request.POST);
