@@ -37,25 +37,26 @@ class Userdata(models.Model):
         else:
             return ""
 
-# class patient(models.Model):
-#     gender_choice = (
-#             ('female', 'Female'),
-#             ('male', 'Male'),
-#             ('other', 'Other'),
-#         )
-#     userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-#     diagnosis = models.TextField(blank = True, null = True)
-#     name = models.CharField(max_length= 30, blank = True, null = True)
-#     age = models.IntegerField(blank = True, null = True)
-#     dob = models.DateField(blank = True, null = True)
-#     gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
+class Patient(models.Model):
+    gender_choice = (
+            ('female', 'Female'),
+            ('male', 'Male'),
+            ('other', 'Other'),
+        )
+    patientid = models.AutoField
+    userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+    diagnosis = models.TextField(blank = True, null = True)
+    name = models.CharField(max_length= 30, blank = True, null = True)
+    age = models.IntegerField(blank = True, null = True)
+    dob = models.DateField(blank = True, null = True)
+    gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
     
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
     
-# class Review(models.Model):
-#     reviewid = models.AutoField
-#     userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-#     doctorid = models.CharField(max_length= 20, blank = True, null = True)
-#     rating = models.IntegerField(blank = True, null = True)
-#     feedback = models.TextField(blank = True, null = True)
+class Review(models.Model):
+    reviewid = models.AutoField
+    userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+    doctorid = models.CharField(max_length= 20, blank = True, null = True)
+    rating = models.IntegerField(blank = True, null = True)
+    feedback = models.TextField(blank = True, null = True)

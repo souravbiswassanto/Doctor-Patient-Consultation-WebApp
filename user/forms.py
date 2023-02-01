@@ -7,3 +7,12 @@ class Userform(forms.ModelForm):
         fields = "__all__"
         
         
+class Patientform(forms.ModelForm):
+    class Meta: 
+        model = Patient
+        fields = "__all__"
+    
+class Reviewform(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = "__all__"
