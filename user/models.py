@@ -48,7 +48,7 @@ class Patient(models.Model):
     diagnosis = models.TextField(blank = True, null = True)
     name = models.CharField(max_length= 30, blank = True, null = True)
     age = models.IntegerField(blank = True, null = True)
-    dob = models.DateField(blank = True, null = True)
+    #dob = models.DateField(blank = True, null = True)
     gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
     
     def __str__(self):

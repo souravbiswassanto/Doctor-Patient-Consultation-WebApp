@@ -30,5 +30,11 @@ def createpatient(request):
     dict = {
         'patient' : patient,
     }
-    if (request.method == 'POST'):
+    if (request.method == "POST"):
         patient = forms.Patientform(request.POST);
+        patient.userid = 13232
+        print(patient.userid)
+        if patient.is_valid():
+            patient.save(commit= True)  
+            return home(request)
+    return render(request, 'user/patient.html', context = dict)
