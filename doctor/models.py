@@ -35,6 +35,7 @@ class Doctordata(models.Model):
     latenightstatus = models.CharField(max_length=30, blank=True, null=True, choices=latenight)
     chamberaddress = models.CharField(max_length = 200, null = True, blank = True)
     phonenumber = models.CharField(max_length = 120, null = True, blank = True)
+    activetime = models.IntegerField(null = True, default = 0)
     
     def __str__(self):
         return self.name

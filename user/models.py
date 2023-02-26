@@ -4,8 +4,54 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.forms import UserCreationForm
 from django.core import validators
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractUser
+
+from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.auth.models import User, UserManager
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
+from django.contrib.auth.forms import UserCreationForm
+from django.core import validators
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import UserManager
+
+class UserProfileManager(UserManager):
+    def create_user_profile(self, phone_number, password=None, **extra_fields):
+        """
+        Creates and saves a UserProfile with the given phone_number and password.
+        """
+        if not phone_number:
+            raise ValueError('The Phone Number must be set')
+        user = self.model(phone_number=phone_number, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser_profile(self, phone_number, password=None, **extra_fields):
+        """
+        Creates and saves a UserProfile with the given phone_number and password,
+        and marks it as a superuser.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user_profile(phone_number, password, **extra_fields)
+
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    phone_number = PhoneNumberField(unique= True)
+    role = models.CharField(max_length=50)
+    USERNAME_FIELD = 'phone_number'
+    objects = UserProfileManager()
+    def __str__(self):
+        return self.user.username
+
 
 class Userdata(models.Model):
+    
     
     gender_choice = (
             ('female', 'Female'),
@@ -13,7 +59,6 @@ class Userdata(models.Model):
             ('other', 'Other'),
         )
     
-    userid = models.AutoField
     name = models.CharField(max_length = 190, null = True, blank = True)
     dob = models.DateField(null = True)
     occupation = models.CharField(max_length = 200, null = True)
@@ -22,9 +67,12 @@ class Userdata(models.Model):
     NID = models.CharField(max_length = 20, unique = True, null = True)
     image = models.ImageField(upload_to="images/",  blank=True)
     gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
+    rating = models.FloatField(null = True, default=0.0)
+    phone_number = PhoneNumberField(unique= True)
+    password = models.CharField(max_length=255, null = True)
     
     def __str__(self):
-        return self.name
+        return str(self.phone_number)
     
     def image_tag(self):
         if self.image:
@@ -36,6 +84,7 @@ class Userdata(models.Model):
             return self.image.url
         else:
             return ""
+
 
 class Patient(models.Model):
     gender_choice = (

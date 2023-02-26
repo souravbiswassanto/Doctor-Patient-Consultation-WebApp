@@ -1,3 +1,9 @@
 from django.shortcuts import render
+from . import forms
+from request.models import *
 
-# Create your views here.
+def Response(request):
+    return render(request, 'user/home.html', context = dict)
+
+def Responseaction(request):
+    return render(request, 'user/home.html', context = dict)

@@ -18,6 +18,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR/ 'static'
 
+TWILIO_ACCOUNT_SID = 'ACeb8e5f434ab5655c5dc077288f3e6950'
+TWILIO_AUTH_TOKEN = '2537fedbff9a40802212be5016fb47ea'
+TWILIO_FROM_NUMBER = '+12765660905'
+TWILIO_VERIFY_SERVICE_SID = 'VAa3c787def9e3e9b126df3bfe2e21b99f'
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -47,6 +53,9 @@ INSTALLED_APPS = [
     'response',
     'phone_field',
     'meeting',
+    'phonenumbers',
+    'django_otp',
+    'twilio',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'webapp.urls'
