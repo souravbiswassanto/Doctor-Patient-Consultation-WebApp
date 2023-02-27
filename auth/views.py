@@ -191,6 +191,7 @@ def signup(request):
 def verify_otp(request):
     if request.method == 'POST':
         phone_number = request.session.get('phone_number')
+        print(phone_number)
         otp = request.POST.get('otp')
         try:
             user_profile = UserProfile.objects.get(phone_number=phone_number)
@@ -207,11 +208,11 @@ def verify_otp(request):
         verification_check = client.verify \
                                      .services(settings.TWILIO_VERIFY_SERVICE_SID) \
                                      .verification_checks \
-                                     .create(to=f"+91{phone_number}", code=otp)
+                                     .create(to=f"{phone_number}", code=otp)
         if verification_check.status == 'approved':
             user = authenticate(request, phone_number=phone_number)
             login(request, user)
-            return redirect('home')
+            return redirect('userhome')
         else:
             messages.error(request, 'Invalid OTP')
             return redirect('verify_otp')
