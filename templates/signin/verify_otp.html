@@ -23,7 +23,12 @@
         <label for="otp">Enter OTP:</label>
         <input type="text" class="form-control" id="otp" name="otp" required>
         </div>
+        <div><br></div>
         <button type="submit" class="btn btn-primary">Verify OTP</button>
+        <button class="btn btn-primary"><a href="{% url 'resend_otp' %}">   Request OTP again</a></button>
+        <div><br></div>
+        <div><button class="btn btn-danger"><a href="{% url 'signup' %}">Back</a></button></div>
+        
     </form>
     </div>
 
