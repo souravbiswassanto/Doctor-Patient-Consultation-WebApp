@@ -18,6 +18,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR/ 'static'
 
+TWILIO_ACCOUNT_SID = 'ACeb8e5f434ab5655c5dc077288f3e6950'
+TWILIO_AUTH_TOKEN = 'e6bd62b0a6c7618326c6251d5b6feb0a'
+TWILIO_FROM_NUMBER = '+12765660905'
+TWILIO_VERIFY_SERVICE_SID = 'VAa3c787def9e3e9b126df3bfe2e21b99f'
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -51,6 +57,7 @@ INSTALLED_APPS = [
     'phonenumbers',
     'django_otp',
     'twilio',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +97,12 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+PHONENUMBER_DEFAULT_REGION = 'BD'
+
+#AUTHENTICATION_BACKENDS = [    'django.contrib.auth.backends.ModelBackend',    'phonenumber_field.auth_backends.PhoneNumberBackend',]
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.contrib.auth.forms import UserCreationForm
 from django.core import validators
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 
 from django.db import models
@@ -12,10 +11,8 @@ from django.contrib.auth.models import User, UserManager
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-from django.contrib.auth.forms import UserCreationForm
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import UserManager
 
 class UserProfileManager(UserManager):
     def create_user_profile(self, phone_number, password=None, **extra_fields):
@@ -41,9 +38,11 @@ class UserProfileManager(UserManager):
 
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    phone_number = PhoneNumberField(unique= True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = PhoneNumberField(unique=True, region='BD')
+    otp = models.CharField(max_length=6, null=True, blank=True)
     role = models.CharField(max_length=50)
+    otp_verified = models.BooleanField(default= False)
     USERNAME_FIELD = 'phone_number'
     objects = UserProfileManager()
     def __str__(self):

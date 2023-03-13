@@ -11,12 +11,12 @@ from django_otp import user_has_device
 
 from user.models import Userdata
 from user.models import UserProfile
-
+from django.contrib.auth import logout
 from django.conf import settings
 from twilio.rest import Client
 from django.core.exceptions import ObjectDoesNotExist
 from twilio.base.exceptions import TwilioRestException
-
+from django.contrib.auth.hashers import check_password
 
 def signup(request):
     if request.method == 'POST':
@@ -25,6 +25,21 @@ def signup(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         role = request.POST['role']
+        
+        
+        try:
+            user = User.objects.get(username=phone_number)
+        except User.DoesNotExist:
+            user = None
+        
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+        
+        if user and not user_profile.otp_verified:
+            messages.error(request, 'Phone number already exist and you need to verify otp')
+            return redirect('verify_otp')
         
         # Validate phone number
         try:
@@ -35,7 +50,7 @@ def signup(request):
             pass
             
         try:
-            parsed_phone_number = phonenumbers.parse(phone_number, "IN") # Use the country code
+            parsed_phone_number = phonenumbers.parse(phone_number, "BD") # Use the country code
             print (phonenumbers.is_valid_number(parsed_phone_number))
             if not phonenumbers.is_valid_number(parsed_phone_number):
                 #raise ValueError('Invalid phone number.')
@@ -47,6 +62,7 @@ def signup(request):
         except phonenumbers.phonenumberutil.NumberParseException:
             messages.error(request, 'Invalid phone number.')
             return redirect('signup')
+        
         
         # Validate passwords
         if password1 != password2:
@@ -66,6 +82,8 @@ def signup(request):
             client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
             verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=phone_number, channel='sms')
             request.session['phone_number'] = phone_number
+            request.session['password'] = password1
+            print(password1)
         except TwilioRestException as e:
             messages.error(request, f'Error: {e.msg}')
             return redirect('signup')
@@ -102,8 +120,16 @@ def verify_otp(request):
             return redirect('verify_otp')
         
         if verification_check.status == 'approved':
-            user = authenticate(request, phone_number=phone_number)
+            #user = authenticate(request, username=User.objects.get(username = phone_number))
+            password = request.session.get('password', None)
+            print(password)
+            user = authenticate(request, username=User.objects.get(username = phone_number), password=password)
+            
             login(request, user)
+            
+            user_profile.otp_verified = True
+            user_profile.save()
+            
             return redirect('userhome')
         else:
             messages.error(request, 'Invalid OTP')
@@ -122,3 +148,31 @@ def resend_otp(request):
     except TwilioRestException as e:
         messages.error(request, f'Error: {e.msg}')
     return redirect('verify_otp')
+
+
+
+def signin(request):
+    if request.method == 'POST':
+        phone_number = request.POST['phone_number']
+        password = request.POST['password']
+        print (request.POST['phone_number'])
+        print (request.POST['password'])
+        try:
+            user = authenticate(request, username=User.objects.get(username = phone_number), password=password)
+            print(user)
+            if user is not None:
+                login(request, user)
+                return redirect('userhome')
+            else:
+                messages.error(request, 'Invalid phone number or password')
+                
+                return redirect('signin')
+        except Exception as e:
+            messages.error(request, 'Error: ' + str(e))
+            return redirect('signin')
+        
+    return render(request, 'signin/signin.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('signin')

@@ -9,6 +9,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(Userdata, UserProfileAdmin)
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['phone_number', 'role']
+    list_display = ['phone_number', 'role', 'otp_verified']
 
 admin.site.register(UserProfile, UserProfileAdmin)

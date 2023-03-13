@@ -43,13 +43,13 @@
   <header id="header" class="fixed-top header-inner-pages">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-      <h1 class="logo me-auto me-lg-0"><a href="index.html"><span>Reviver</span></a></h1>
+      <h1 class="logo me-auto me-lg-0"><a href="{% url 'doctorhome' %}"><span>Reviver</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a class="nav-link scrollto " href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto " href="{% url 'doctorhome' %}">Home</a></li>
           <li><a class="nav-link scrollto" href="#request">Request</a></li>
           <li><a class="nav-link scrollto" href="#services">Active doctors</a></li>
           <li><a class="nav-link scrollto " href="#portfolio">About Us</a></li>
@@ -98,9 +98,9 @@
 
     <section class="inner-page">
       <div class="container">
-        {% block body %}
+      {% block body %}
 
-  {% endblock %}
+      {% endblock %}
       </div>
     </section>
 

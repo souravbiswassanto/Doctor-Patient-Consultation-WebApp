@@ -45,7 +45,10 @@
               <label for="password_confirm">Confirm Password</label>
               <input type="password" class="form-control" id="password_confirm" name="password2" required>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="" class="btn btn-primary"><a href = "{% url 'signin' %}">Login</a></button>
+            </div>
           </form>
         </div>
       </div>
