@@ -8,4 +8,5 @@ urlpatterns = [
     path('resend_otp/', views.resend_otp, name = 'resend_otp'),
     path('signin/', views.signin, name = 'signin'),
     path('logout/',views.logout_view, name = 'logout'),
+    path('userprofile/', views.userprofile, name = 'userprofile'),
 ]

@@ -3,10 +3,10 @@ from .models import *
 # Register your models here.
 
 
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['name', 'image']
+class UserDataAdmin(admin.ModelAdmin):
+    list_display = ['user_profile', 'name', 'dob', 'occupation', 'monthly_income', 'address', 'NID', 'image',]
 
-admin.site.register(Userdata, UserProfileAdmin)
+admin.site.register(Userdata, UserDataAdmin)
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['phone_number', 'role', 'otp_verified']

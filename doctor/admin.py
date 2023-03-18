@@ -4,6 +4,6 @@ from .models import *
 
 
 class DoctordataAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['user_profile', 'name', 'doctoremail', 'regtype', 'regnum', 'NID', 'image', 'gender']
 
 admin.site.register(Doctordata, DoctordataAdmin)

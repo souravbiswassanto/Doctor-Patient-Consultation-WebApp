@@ -3,7 +3,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 # Create your models here.
-
+from user.models import *
 class Doctordata(models.Model):
     
     gender_choice = (
@@ -19,8 +19,7 @@ class Doctordata(models.Model):
             ('yes', 'Yes'),
             ('no', 'No'),
         )
-    
-    userid = models.AutoField
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='doctor_data', default = None)
     name = models.CharField(max_length = 200, null = True, blank = True)
     doctoremail = models.EmailField(max_length = 200, null = True, blank = True)
     regtype = models.CharField(max_length=30, blank=True, null=True, choices=regt)
@@ -34,8 +33,6 @@ class Doctordata(models.Model):
     working_hospital = models.CharField(max_length = 200, null = True, blank = True)
     latenightstatus = models.CharField(max_length=30, blank=True, null=True, choices=latenight)
     chamberaddress = models.CharField(max_length = 200, null = True, blank = True)
-    phonenumber = models.CharField(max_length = 120, null = True, blank = True)
-    activetime = models.IntegerField(null = True, default = 0)
     
     def __str__(self):
         return self.name

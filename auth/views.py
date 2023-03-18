@@ -8,7 +8,7 @@ from django_otp import devices_for_user
 import random
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp import user_has_device
-
+from django.utils import timezone
 from user.models import Userdata
 from user.models import UserProfile
 from django.contrib.auth import logout
@@ -17,6 +17,9 @@ from twilio.rest import Client
 from django.core.exceptions import ObjectDoesNotExist
 from twilio.base.exceptions import TwilioRestException
 from django.contrib.auth.hashers import check_password
+from doctor.models import *
+from user import forms
+from django.contrib.auth import update_session_auth_hash
 
 def signup(request):
     if request.method == 'POST':
@@ -38,6 +41,8 @@ def signup(request):
             user_profile = None
         
         if user and not user_profile.otp_verified:
+            request.session['phone_number'] = phone_number
+            request.session['password'] = password1
             messages.error(request, 'Phone number already exist and you need to verify otp')
             return redirect('verify_otp')
         
@@ -45,13 +50,13 @@ def signup(request):
         try:
             user_profile = UserProfile.objects.get(phone_number=phone_number)
             messages.error(request, 'Phone number already exists')
+            request.session['phone_number'] = phone_number
             return redirect('signup')
         except ObjectDoesNotExist:
             pass
             
         try:
             parsed_phone_number = phonenumbers.parse(phone_number, "BD") # Use the country code
-            print (phonenumbers.is_valid_number(parsed_phone_number))
             if not phonenumbers.is_valid_number(parsed_phone_number):
                 #raise ValueError('Invalid phone number.')
                 messages.error(request, 'Invalid phone number.')
@@ -73,7 +78,7 @@ def signup(request):
         user = User.objects.create_user(username=phone_number)
         user.set_password(password1)
         user.save()
-        
+        request.session['phone_number'] = phone_number
         user_profile = UserProfile.objects.create(user=user, phone_number=phone_number, role=role)
         user_profile.save()
         
@@ -83,7 +88,7 @@ def signup(request):
             verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=phone_number, channel='sms')
             request.session['phone_number'] = phone_number
             request.session['password'] = password1
-            print(password1)
+            
         except TwilioRestException as e:
             messages.error(request, f'Error: {e.msg}')
             return redirect('signup')
@@ -96,7 +101,6 @@ def signup(request):
 def verify_otp(request):
     if request.method == 'POST':
         phone_number = request.session.get('phone_number')
-        print(phone_number)
         otp = request.POST.get('otp')
         try:
             user_profile = UserProfile.objects.get(phone_number=phone_number)
@@ -120,19 +124,19 @@ def verify_otp(request):
             return redirect('verify_otp')
         
         if verification_check.status == 'approved':
-            #user = authenticate(request, username=User.objects.get(username = phone_number))
+            user = authenticate(request, username=User.objects.get(username = phone_number))
             password = request.session.get('password', None)
-            print(password)
             user = authenticate(request, username=User.objects.get(username = phone_number), password=password)
-            
             login(request, user)
-            
+            request.session['phone_number'] = phone_number
             user_profile.otp_verified = True
             user_profile.save()
-            
+            user_profile.join_date = timezone.now()
+            user_profile.last_seen = timezone.now()
             return redirect('userhome')
         else:
             messages.error(request, 'Invalid OTP')
+            request.session['phone_number'] = phone_number
             return redirect('verify_otp')
     else:
         return render(request, 'signin/verify_otp.html')
@@ -146,6 +150,7 @@ def resend_otp(request):
         verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=phone_number, channel='sms')
         messages.success(request, 'OTP sent successfully.')
     except TwilioRestException as e:
+        print(e.msg)
         messages.error(request, f'Error: {e.msg}')
     return redirect('verify_otp')
 
@@ -155,13 +160,32 @@ def signin(request):
     if request.method == 'POST':
         phone_number = request.POST['phone_number']
         password = request.POST['password']
-        print (request.POST['phone_number'])
-        print (request.POST['password'])
+        
+        try:
+            user = User.objects.get(username=phone_number)
+        except User.DoesNotExist:
+            user = None
+        
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+        
+        if user and not user_profile.otp_verified:
+            request.session['phone_number'] = phone_number
+            messages.error(request, 'Phone number already exist and you need to verify otp')
+            return redirect('verify_otp')
+        
         try:
             user = authenticate(request, username=User.objects.get(username = phone_number), password=password)
-            print(user)
+            
             if user is not None:
+                request.session['phone_number'] = phone_number
                 login(request, user)
+                request.session['phone_number'] = phone_number
+                print(request.session)
+                print (request.session['phone_number'], ' hellow rosld ')
+                user_profile.last_seen = timezone.now()
                 return redirect('userhome')
             else:
                 messages.error(request, 'Invalid phone number or password')
@@ -173,6 +197,64 @@ def signin(request):
         
     return render(request, 'signin/signin.html')
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('signin')
+
+@login_required
+def userprofile(request):
+    
+    phone_number = request.session.get('phone_number')
+    print (phone_number)
+    user_profile = UserProfile.objects.get(phone_number = phone_number)
+    user_profile.last_seen = timezone.now()
+    context = {}
+    form = forms.Userform
+    #form['user_profile']= user_profile
+    context['form'] = form
+    context['user_profile'] = user_profile
+    role = user_profile.role
+    data = None
+    if role == 'user':
+        data = Userdata.objects.get(user_profile = user_profile)
+    if role == 'doctor':
+        data = Doctordata.objects.get(user_profile = user_profile)
+    print (user_profile)
+    print (role)
+    print('user profile printed')
+    context['data'] = data
+    doctor = Doctordata.objects.all()
+    context['doctor'] = doctor
+    
+    if request.method == 'POST':
+        print("post requested")
+        print(request.user, request.user)
+        
+        up = Userdata.objects.get(user_profile = user_profile)
+        userdata = forms.Userform(request.POST, request.FILES, instance=up)
+        userdata.user_profile = user_profile
+        if userdata.is_valid():
+            print (userdata.cleaned_data['name'])
+            old_password = userdata.cleaned_data['oldpassword']
+            new_password = userdata.cleaned_data['newpassword']
+            confirm_password = userdata.cleaned_data['confirmpassword']
+            
+            if old_password == None:
+                userdata.save(commit=True)
+                return redirect('userprofile')
+            
+            if not request.user.check_password(old_password):
+                messages.error(request, 'Your old password is incorrect.')
+            elif new_password != confirm_password:
+                messages.error(request, 'New passwords do not match.')
+            else:
+                request.user.set_password(new_password)
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+                userdata.save(commit=True)
+                messages.success(request, 'Your password has been updated.')
+                return redirect('userprofile')
+        return redirect('userprofile')
+    
+    return render(request, 'signin/profile.html', context)

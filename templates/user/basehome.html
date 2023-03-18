@@ -48,13 +48,13 @@
   <header id="header" class="fixed-top header-inner-pages">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-      <h1 class="logo me-auto me-lg-0"><a href="{% url 'doctorhome' %}"><span>Reviver</span></a></h1>
+      <h1 class="logo me-auto me-lg-0"><a href="{% url 'userhome' %}"><span>Reviver</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a class="nav-link scrollto " href="{% url 'doctorhome' %}">Home</a></li>
+          <li><a class="nav-link scrollto " href="{% url 'userhome' %}">Home</a></li>
           <li class="dropdown"><a href="#"><span>Request</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               <li><a href="#">Regular</a></li>
@@ -83,13 +83,11 @@
       <a href="#about" class="get-started-btn scrollto"><span class="MuiButton-label-214">Search</span></a>
       {% endif %}
       {% if user_profile %}
-      <a href="#about" class="get-started-btn scrollto"><span class="MuiButton-label-214">Subscribe</span></a>
+      <a href="{% url 'userprofile' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">Profile</span></a>
       <a href="{% url 'logout' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">Logout</span></a>
-      
+
       {% endif %}
       </div>
-      
-
     </div>
   </header><!-- End Header -->
 

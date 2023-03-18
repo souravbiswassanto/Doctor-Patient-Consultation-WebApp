@@ -43,6 +43,8 @@ class UserProfile(models.Model):
     otp = models.CharField(max_length=6, null=True, blank=True)
     role = models.CharField(max_length=50)
     otp_verified = models.BooleanField(default= False)
+    join_date = models.DateField(blank = True, null = True)
+    last_seen = models.DateTimeField(blank=True, null=True)
     USERNAME_FIELD = 'phone_number'
     objects = UserProfileManager()
     def __str__(self):
@@ -51,27 +53,26 @@ class UserProfile(models.Model):
 
 class Userdata(models.Model):
     
-    
     gender_choice = (
-            ('female', 'Female'),
-            ('male', 'Male'),
-            ('other', 'Other'),
+            ('male', 'male'),
+            ('female', 'female'),
+            ('other', 'other'),
         )
-    
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_data', default = None)
     name = models.CharField(max_length = 190, null = True, blank = True)
-    dob = models.DateField(null = True)
-    occupation = models.CharField(max_length = 200, null = True)
-    monthly_income = models.IntegerField(null = True)
-    address = models.CharField(max_length = 300, null = True)
-    NID = models.CharField(max_length = 20, unique = True, null = True)
+    dob = models.DateField(null = True, blank = True)
+    occupation = models.CharField(max_length = 200, null = True, blank = True)
+    monthly_income = models.IntegerField(null = True, blank = True)
+    address = models.CharField(max_length = 300, null = True, blank = True)
+    NID = models.CharField(max_length = 20, unique = True, null = True, blank = True)
     image = models.ImageField(upload_to="images/",  blank=True)
     gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
-    rating = models.FloatField(null = True, default=0.0)
-    phone_number = PhoneNumberField(unique= True)
-    password = models.CharField(max_length=255, null = True)
-    
+    bio = models.TextField(null = True, blank = True)
+    oldpassword = models.CharField(max_length=128, null = True, blank = True)
+    newpassword = models.CharField(max_length=18, null = True, blank = True)
+    confirmpassword = models.CharField(max_length=18, null = True, blank = True)
     def __str__(self):
-        return str(self.phone_number)
+        return str(self.user_profile)
     
     def image_tag(self):
         if self.image:

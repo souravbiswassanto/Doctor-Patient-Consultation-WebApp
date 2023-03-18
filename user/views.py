@@ -31,25 +31,37 @@ def doctor_detail(request, doctor_id):
 
 def userhome(request):
     context = {}
-    
+    doctors = Doctordata.objects.all()
+    context['doctors'] = doctors
     # check if user is authenticated
+    phone_number = request.session.get('phone_number')
+    print('phone number: ', phone_number)
+    print(request.session)
     if request.user.is_authenticated:
         # check if user has completed otp verification
         try:
             user_profile = UserProfile.objects.get(user=request.user, otp_verified=True)
+            print (user_profile)
             context['user_profile'] = user_profile
         except UserProfile.DoesNotExist:
-            pass
+            pass 
     
     # check if user is registered
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-        context['user_profile'] = user_profile
-    except UserProfile.DoesNotExist:
-        pass
+    # try:
+    #     user_profile = UserProfile.objects.get(user=request.user)
+    #     context['user_profile'] = user_profile
+    # except UserProfile.DoesNotExist:
+    #     pass
     
     return render(request, 'user/finalhome.html', context)
 
+def doctor_detail(request, doctor_id):
+    doctordata = Doctordata.objects.get(id = doctor_id)
+    print(doctordata.name, doctordata.NID)
+    context = {}
+    context['data'] = doctordata
+    context['user_profile'] = doctordata.user_profile
+    return render(request, 'signin/viewprofile.html', context)
 
 @login_required
 def profile(request):
@@ -74,7 +86,7 @@ def form(request):
         Userdata = forms.Userform(request.POST, request.FILES)
         if Userdata.is_valid():
             Userdata.save(commit=True)
-            return home(request)
+            return redirect('home')
     return render(request, 'user/form.html', context=dict)
 
 def createpatient(request):
