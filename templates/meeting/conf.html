@@ -1,0 +1,16 @@
+{% extends 'user/base.html' %}
+
+{% block body %}
+    <h1>Consultation Request</h1>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endif %}
+    <p>User ID: {{ user_id }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Accept Consultation Request</button>
+    </form>
+{% endblock %}

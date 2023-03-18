@@ -1,0 +1,9 @@
+{% extends 'user/base.html' %}
+
+{% block body %}
+<h1>Authorize Zoom App</h1>
+<p>Click the button below to authorize the Zoom app:</p>
+<form method="get" action="{% url 'zoom_authorize' %}">
+  <input type="submit" value="Authorize Zoom App">
+</form>
+{% endblock %}
