@@ -71,6 +71,10 @@ class Userdata(models.Model):
     oldpassword = models.CharField(max_length=128, null = True, blank = True)
     newpassword = models.CharField(max_length=18, null = True, blank = True)
     confirmpassword = models.CharField(max_length=18, null = True, blank = True)
+    active_time_start = models.TimeField(null = True, blank = True)
+    active_time_end = models.TimeField(null = True, blank = True)
+    active_day = models.DateField(blank = True, null = True)
+    
     def __str__(self):
         return str(self.user_profile)
     

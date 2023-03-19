@@ -28,6 +28,7 @@
           <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-crud-users" target="__blank"><i class="fa fa-fw fa-th mr-1"></i><span>CRUD</span></a></li>
           <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-edit-profile-page" target="__blank"><i class="fa fa-fw fa-cog mr-1"></i><span>Settings</span></a></li>
         </ul>
+        
       </div>
     </div>
   </div>
@@ -212,10 +213,13 @@
         <div class="card mb-3">
           <div class="card-body">
             <div class="px-xl-3">
-              <button class="btn btn-block btn-secondary">
-                <i class="fa fa-sign-out"></i>
-                <span>Logout</span>
-              </button>
+              <div class = "row"><label>Set Active date</label></div>
+              <div class = "row"><input type = 'date' name = 'active_day' placeholder="{{ data.active_day }}" value = "{{ data.active_day|date:'Y-m-d' }}"></div>
+              <div class = "row"><label>Active Start Time</label></div>
+              <div class = "row"><input type = 'time' name = 'active_time_start' placeholder="{{ data.active_time_start }}" value = "{{ data.active_time_start|time:'H:i' }}"></div>
+              <div class = "row"><label>Active End Time</label></div>
+              <div class = "row"><input type = 'time' name = 'active_time_end' placeholder="{{ data.active_time_end }}" value = "{{ data.active_time_end|time:'H:i' }}"></div>
+            
             </div>
           </div>
         </div>

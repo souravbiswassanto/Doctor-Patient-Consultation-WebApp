@@ -52,6 +52,51 @@ home
 </style>
 <script src="{% static 'assets/js/timer.js' %}"></script>
 
+<script>
+  // JavaScript code to create and update the countdown timer for each doctor module
+
+// Loop through each doctor module on the page
+// Get the countdown timer elements
+const countdownTimerElements = document.querySelectorAll('.countdown-timer');
+
+// Loop through each countdown timer element
+countdownTimerElements.forEach(element => {
+  // Get the doctor's active time in minutes
+  const activeTime = parseInt(element.closest('.doctor-module').dataset.activetime);
+
+  // Convert active time to milliseconds
+  const activeTimeMs = activeTime * 60 * 1000;
+
+  // Set the countdown end time
+  const countdownEnd = new Date().getTime() + activeTimeMs;
+
+  // Update the countdown timer every second
+  const countdownInterval = setInterval(() => {
+    // Get the current time
+    const currentTime = new Date().getTime();
+
+    // Calculate the time remaining
+    const timeRemainingMs = countdownEnd - currentTime;
+    const timeRemainingSec = Math.floor(timeRemainingMs / 1000);
+
+    // Calculate the hours, minutes, and seconds remaining
+    const hoursRemaining = Math.floor(timeRemainingSec / 3600);
+    const minutesRemaining = Math.floor((timeRemainingSec % 3600) / 60);
+    const secondsRemaining = Math.floor(timeRemainingSec % 60);
+
+    // Update the countdown timer element with the remaining time
+    element.innerHTML = `Active for ${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`;
+
+    // If the countdown is over, clear the interval and update the element with a message
+    if (timeRemainingMs <= 0) {
+      clearInterval(countdownInterval);
+      element.innerHTML = 'Inactive';
+    }
+  }, 1000);
+});
+
+
+</script>
 
 {% endblock %}
 {% block body %}
@@ -702,72 +747,7 @@ home
   }
   
 </script> -->
-<script>
-  // JavaScript code to create and update the countdown timer for each doctor module
 
-// Loop through each doctor module on the page
-document.querySelectorAll('.doctor-module').forEach((module) => {
-  // Get the doctor ID from the data-id attribute
-  const doctorId = module.dataset.id;
-
-  // Get the initial countdown value from the active-time span
-  const activeTime = module.querySelector('.active-time');
-  const initialCountdownValue = parseInt(activeTime.textContent);
-
-  // Get the countdown timer element
-  const countdownTimer = module.querySelector('.countdown-timer');
-  
-  // Check if the countdown value is already stored in local storage
-  let countdownValue = localStorage.getItem(`doctor-${doctorId}-countdown`);
-  if (countdownValue === null) {
-    // If the countdown value is not in local storage, use the initial value
-    countdownValue = initialCountdownValue;
-  } else {
-    // If the countdown value is in local storage, parse it as an integer
-    countdownValue = parseInt(countdownValue);
-  }
-
-  // Set the initial countdown value in the timer element
-  countdownTimer.textContent = formatTime(countdownValue);
-
-  // Start the countdown timer
-  const countdownInterval = setInterval(() => {
-    // Decrement the countdown value by 1 second
-    countdownValue--;
-
-    // Store the current countdown value in local storage
-    localStorage.setItem(`doctor-${doctorId}-countdown`, countdownValue);
-    
-    // Update the timer element with the new countdown value
-    countdownTimer.textContent = formatTime(countdownValue);
-
-    // Check if the countdown timer has reached 0
-    if (countdownValue <= 0) {
-      // If the countdown timer has reached 0, clear the interval and reset the timer
-      clearInterval(countdownInterval);
-      countdownTimer.textContent = '01:00:00';
-    }
-  }, 1000);
-});
-
-// Helper function to format a time in seconds as HH:MM:SS
-function formatTime(timeInSeconds) {
-  const hours = Math.floor(timeInSeconds / 3600);
-  const minutes = Math.floor((timeInSeconds - (hours * 3600)) / 60);
-  const seconds = timeInSeconds - (hours * 3600) - (minutes * 60);
-  return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-}
-
-// Helper function to pad a number with leading zeros if necessary
-function padZero(number) {
-  if (number < 10) {
-    return `0${number}`;
-  } else {
-    return `${number}`;
-  }
-}
-
-</script>
 
 
 {% endblock %}

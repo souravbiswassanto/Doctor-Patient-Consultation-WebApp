@@ -12,7 +12,7 @@
     <form method="POST" action="{% url 'create_meeting' %}">
         {% csrf_token %}
         <label>Topic</label>
-        <input type = "text" name = 'topic' required>
+        <input type = "text" name = 'topic' required> 
         <label>Meeting duration(in minutes)</label>
         <input type = 'number' name = 'duration' required>
         <button type="submit" class="btn btn-primary">Accept Consultation Request</button>
