@@ -1,9 +1,14 @@
 from django.db import models
 # Create your models here.
+import pytz
+
+from django.utils import timezone
+from pytz import timezone as pytz_timezone
 from django.utils.safestring import mark_safe
 from django.contrib.auth.forms import UserCreationForm
 from django.core import validators
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime
 
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
@@ -89,6 +94,9 @@ class Userdata(models.Model):
         else:
             return ""
 
+def get_current_time():
+    dhaka = pytz_timezone('Asia/Dhaka')
+    return timezone.now().astimezone(dhaka)
 
 class Patient(models.Model):
     gender_choice = (
@@ -96,17 +104,22 @@ class Patient(models.Model):
             ('male', 'Male'),
             ('other', 'Other'),
         )
-    patientid = models.AutoField
-    userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+    
+    user_profile = models.ForeignKey(UserProfile, on_delete = models.CASCADE)
     diagnosis = models.TextField(blank = True, null = True)
     name = models.CharField(max_length= 30, blank = True, null = True)
     age = models.IntegerField(blank = True, null = True)
     #dob = models.DateField(blank = True, null = True)
     gender = models.CharField(max_length=30, blank=True, null=True, choices=gender_choice)
-    
+    image = models.ImageField(upload_to="images/",  blank=True, null = True)
+    created_at = models.DateTimeField(default=get_current_time(), blank = True, null = True)
     def __str__(self):
-        return self.name
-    
+        return str(self.id)
+    def __init__(self, *args, **kwargs):
+        user_profile = kwargs.pop('user_profile', None)
+        super().__init__(*args, **kwargs)
+        if user_profile:
+            self.instance.user_profile = user_profile
 class Review(models.Model):
     reviewid = models.AutoField
     userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)

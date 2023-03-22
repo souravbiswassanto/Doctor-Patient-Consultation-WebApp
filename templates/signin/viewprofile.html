@@ -36,6 +36,13 @@ Profile
     </div>
 
     <div class="col">
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
       <div class="row">
         <div class="col mb-3">
           <div class="card">
@@ -78,21 +85,34 @@ Profile
                                   aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <form>
+                                <form method="POST" action="{% url 'doctor_detail' data.id  %}">
+                                  {% csrf_token %}
                                   <div class="mb-3">
+
                                     <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                    <input type="text" class="form-control" id="recipient-name">
+
+                                    <input type="text" class="form-control" id="recipient-name" value='{{ data.name }}'
+                                      readonly>
+                                  </div>
+                                  <div class="mb-3">
+
+                                    <label for="recipient-name" class="col-form-label">Patient ID</label>
+
+                                    <input type="number" class="form-control" id="recipient-name" name='id'
+                                      placeholder='Find your patient id from patient list page (ex: ID = 3)'>
                                   </div>
                                   <div class="mb-3">
                                     <label for="message-text" class="col-form-label">Message:</label>
-                                    <textarea class="form-control" id="message-text"></textarea>
+                                    <textarea class="form-control" rows="8" id="message-text"
+                                      name='description'></textarea>
                                   </div>
-                                </form>
+
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Send message</button>
+                                <button type="Submit" class="btn btn-primary" value="Submit">Send Request</button>
                               </div>
+                              </form>
                             </div>
                           </div>
                         </div>
@@ -226,17 +246,11 @@ Profile
 
                       <div class="row">
                         <div class="col d-flex justify-content-end">
-                          <button class="btn btn-primary" type="submit">Save Changes</button>
+                          <!-- <button class="btn btn-primary" type="submit">Save Changes</button> -->
                         </div>
                       </div>
 
-                      {% if messages %}
-                      <ul class="messages">
-                        {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                          {% endfor %}
-                      </ul>
-                      {% endif %}
+
 
 
                   </div>

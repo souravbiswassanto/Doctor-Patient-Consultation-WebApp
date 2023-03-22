@@ -9,7 +9,7 @@ class Regreqform(forms.ModelForm):
 class Emgreqform(forms.ModelForm):
     class Meta:
         model = Emgergency
-        fields = "__all__"
+        exclude = ['user_profile', 'doctor_profile', 'patient_profile', 'reqdatetime']
 
 class Latereqfrom(forms.ModelForm):
     class Meta:

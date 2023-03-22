@@ -63,7 +63,7 @@ def create_zoom_meeting(request,topic, start_time, duration, timezone, password)
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
-
+    
     # Set up the data for the API request
     data = {
     'topic': topic,
@@ -100,11 +100,18 @@ def create_meeting(request):
         duration = request.POST.get('duration')
         tz = settings.TIME_ZONE  # Replace with your own timezone
         password = request.POST.get('password')
+        num_meetings = 2
 
+        # Create the Zoom meetings
+        for i in range(num_meetings):
+            response = create_zoom_meeting(request, f"{topic} {i}", start_time, duration, tz, password)
+            print(response)
+            print(response['join_url'])
         # Create the Zoom meeting
-        response = create_zoom_meeting(request,topic, start_time, duration, tz, password)
-        print (response)
+        #response = create_zoom_meeting(request,topic, start_time, duration, tz, password)
+        #print (response)
         # Redirect the user to the Zoom join URL
+        #print(response['join_url'])
         return redirect(response['join_url'])
     return render(request, 'meeting/create_meeting.html')
 

@@ -12,3 +12,8 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['phone_number', 'role', 'otp_verified']
 
 admin.site.register(UserProfile, UserProfileAdmin)
+
+class PatientAdmin(admin.ModelAdmin):
+    list_display = ['name', 'age', 'gender']
+
+admin.site.register(Patient, PatientAdmin)

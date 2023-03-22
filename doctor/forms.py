@@ -4,7 +4,7 @@ from .models import *
 class Doctorform(forms.ModelForm):
     class Meta:
         model = Doctordata
-        fields = "__all__"
+        exclude = ['user_profile']
         
         
 # class Doctorformbeta(forms.ModelForm):

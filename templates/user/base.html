@@ -79,12 +79,12 @@
       <div> 
         {% if user_profile is none %}
         <a href="{% url 'signup' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">Get Started</span></a>
-        <a href="#about" class="get-started-btn scrollto"><span class="MuiButton-label-214">Search</span></a>
         {% endif %}
+        <a href="{% url 'findin' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">&#x1F50D;Search</span></a>
+        
         {% if user_profile %}
         <a href="{% url 'userprofile' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">Profile</span></a>
         <a href="{% url 'logout' %}" class="get-started-btn scrollto"><span class="MuiButton-label-214">Logout</span></a>
-        
         {% endif %}
         </div>
 
@@ -94,19 +94,7 @@
   <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
-    <section class="breadcrumbs">
-      <div class="container">
-
-        <div class="d-flex justify-content-between align-items-center">
-          <h2>Inner Page</h2>
-          <ol>
-            <li><a href="index.html">Home</a></li>
-            <li>Inner Page</li>
-          </ol>
-        </div>
-
-      </div>
-    </section><!-- End Breadcrumbs -->
+    
 
     <section class="inner-page">
       <div class="container">

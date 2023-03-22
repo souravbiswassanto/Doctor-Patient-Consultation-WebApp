@@ -11,7 +11,7 @@ class Userform(forms.ModelForm):
 class Patientform(forms.ModelForm):
     class Meta: 
         model = Patient
-        fields = "__all__"
+        exclude = ['user_profile', 'created_at']
     
 class Reviewform(forms.ModelForm):
     class Meta:

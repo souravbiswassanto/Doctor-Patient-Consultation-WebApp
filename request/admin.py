@@ -1,3 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
+from .models import *
+#Register your models here.
+class RequestdataAdmin(admin.ModelAdmin):
+    list_display = ['user_profile', 'doctor_profile', 'patient_profile', 'reqdatetime']
+admin.site.register(Emgergency, RequestdataAdmin)

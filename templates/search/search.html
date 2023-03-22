@@ -1,0 +1,212 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block title %}
+home
+{% endblock %}
+
+{% block addhead %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+<style>
+    /* Style rules for the round image */
+    .round-image {
+        border-radius: 50%;
+        /* Set the border radius to 50% to make it circular */
+        width: 100px;
+        /* Set the width and height of the image */
+        height: 95px;
+    }
+</style>
+<style>
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .get-started-btn,
+    .subscribe-btn,
+    .search-btn {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        background-color: #2196f3;
+    }
+
+    @media (max-width: 768px) {
+        .button-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .get-started-btn,
+        .subscribe-btn,
+        .search-btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+    }
+</style>
+<script src="{% static 'assets/js/timer.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Get form and search button
+    const form = document.querySelector('form');
+    const searchBtn = document.querySelector('button');
+
+    // Add event listener to search button
+    searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Get values of all form controls
+        const speciality = document.querySelector('#speciality').value;
+        const location = document.querySelector('#location').value;
+        const fees = document.querySelector('#fees').value;
+
+        // Send search parameters to server
+        // You can use fetch() or any other method to send the search parameters to the server
+    });
+
+</script>
+
+
+
+
+{% endblock %}
+{% block body %}
+
+
+<div class="container mt-5">
+    {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+    <form method="POST" action="{% url 'findin' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="speciality">Speciality</label>
+                <select class="form-control" name = 'speciality'>
+                    <option selected value = ''>None</option>
+                    <option value = "Cardiologist">Cardiologist</option>
+                    <option value= "Dentist">Dentist</option>
+                    <option value = "Dermatologist">Dermatologist</option>
+                    <option value = "ENT specialist">ENT specialist</option>
+                    <option value = "General physician">General physician</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="location">Location</label>
+                <input type="text" class="form-control" id="location" placeholder="City, State" name = 'location'>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="fees">Fees</label>
+                <select class="form-control" id="fees" name = 'visit'>
+                    <option selected value = '0'>0</option>
+                    <option value = '1'>Less than 500</option>
+                    <option value = '2'>500-1000</option>
+                    <option value = '3'>1001-2000</option>
+                    <option value = '4'>More than 2000</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="location">Date</label>
+                <input type="date" class="form-control" id="location" placeholder="City, State" name = 'datef'>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+<!-- ======= Hero Section ======= -->
+
+<main id="main">
+
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services">
+        <div class="container" data-aos="fade-up">
+
+            <div class="section-title">
+                <h2>Reviver</h2>
+                <p>Your Search Results</p>
+            </div>
+
+            <div class="row" id="doctoridreload">
+
+                {% for data in doctors %}
+
+                <div class="col-md-2 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="icon-box">
+                        <span><img src="/media/{{ data.image }}" alt="image not found" class="round-image"></span>
+                        <h5><span> {{ data.name }}<span class="rating"> ({{ data.rating }} <i
+                                        class="fa fa-star"></i>)</span>
+                            </span></h5>
+
+                        <div class="doctor-module" data-id="{{ data.id }}">
+                            <span>Will able to take requests from:</span>
+                            <p><span class="active-time">{{ data.active_time_start }} - {{ data.active_time_end }}
+                                </span></p>
+                            <div class="countdown-timer"></div>
+                        </div>
+                        <button class="btn btn-danger"><a href="{% url 'doctor_detail' doctor_id=data.id %}">Consult
+                                Now</a></button>
+                    </div>
+                </div>
+
+                {% endfor %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if doctors.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ doctors.previous_page_number }}">&lt;</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+                        {% endif %}
+
+                        {% for i in doctors.paginator.page_range %}
+                        {% if doctors.number == i %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ i }} <span
+                                    class="sr-only">(current)</span></a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if doctors.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ doctors.next_page_number }}">&gt;</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ doctors.paginator.num_pages }}">&raquo;</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </section><!-- End Services Section -->
+
+</main><!-- End #main -->
+
+
+
+{% endblock %}

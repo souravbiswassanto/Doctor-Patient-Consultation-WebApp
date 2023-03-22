@@ -18,7 +18,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from twilio.base.exceptions import TwilioRestException
 from django.contrib.auth.hashers import check_password
 from doctor.models import *
-from user import forms
+from user import forms as uf
+from doctor import forms
 from django.contrib.auth import update_session_auth_hash
 
 def signup(request):
@@ -210,11 +211,18 @@ def userprofile(request):
     user_profile = UserProfile.objects.get(phone_number = phone_number)
     user_profile.last_seen = timezone.now()
     context = {}
-    form = forms.Userform
-    #form['user_profile']= user_profile
-    context['form'] = form
+    form = None
+    patientlist = Patient.objects.filter(user_profile=user_profile).order_by('-created_at')
+    context['patientlist'] = patientlist
+    
     context['user_profile'] = user_profile
     role = user_profile.role
+    if role == 'user':
+        form = uf.Userform()
+    if role == 'doctor':
+        form = forms.Doctorform()
+    #form['user_profile']= user_profile
+    context['form'] = form
     data = None
     if role == 'user':
         data = Userdata.objects.get(user_profile = user_profile)
@@ -228,11 +236,15 @@ def userprofile(request):
     context['doctor'] = doctor
     
     if request.method == 'POST':
-        print("post requested")
-        print(request.user, request.user)
-        
-        up = Userdata.objects.get(user_profile = user_profile)
-        userdata = forms.Userform(request.POST, request.FILES, instance=up)
+        up = None
+        userdata = None
+        if role == 'user':
+            up = Userdata.objects.get(user_profile = user_profile)
+            userdata = uf.Userform(request.POST, request.FILES, instance=up)
+        if role == 'doctor':
+            up = Doctordata.objects.get(user_profile = user_profile)
+            userdata = forms.Doctorform(request.POST, request.FILES, instance=up)
+     
         userdata.user_profile = user_profile
         if userdata.is_valid():
             print (userdata.cleaned_data['name'])
@@ -257,4 +269,7 @@ def userprofile(request):
                 return redirect('userprofile')
         return redirect('userprofile')
     
-    return render(request, 'signin/profile.html', context)
+    if role == 'user' :
+        return render(request, 'signin/userprofile.html', context)
+    else:
+        return render(request, 'signin/doctorprofile.html', context)

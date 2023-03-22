@@ -101,13 +101,13 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>Occupation</label>
                               <input class="form-control" type="text" name="occupation" placeholder="{{ data.occupation }}" value="{{ data.occupation }}" >
                             </div>
                           </div>
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>Monthly Income</label>
                               <input class="form-control" type="number" name="monthly_income" placeholder="{{ data.monthly_income }}"value="{{ data.monthly_income }}">
                             </div>
@@ -115,13 +115,13 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>Address</label>
                               <input class="form-control" type="text" name="address" placeholder="{{ data.address }}" value="{{ data.address }}">
                             </div>
                           </div>
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>NID</label>
                               <input class="form-control" type="text" name="NID" placeholder="{{ data.NID }}"value="{{ data.NID }}" required>
                             </div>
@@ -129,7 +129,7 @@
                         </div>
                         <div class="row">
                           <div class="col mb-3">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>About</label>
                               <textarea class="form-control" name = "bio" rows="5" placeholder="{{ data.bio }}">{{ data.bio }}</textarea>
                             </div>
@@ -140,7 +140,7 @@
                     <div class="row">
                       <input type="hidden" name="user_profile" value="{{ data.user_profile }}">
                       <div class="col-12 col-sm-6 mb-3">
-                        <div class="mb-2"><b>Change Password</b></div>
+                        <div class="mb-2 mt-2"><b>Change Password</b></div>
                         <div class="row">
                           <div class="col">
                             <div class="form-group">
@@ -151,7 +151,7 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>New Password</label>
                               <input class="form-control" type="password" name = "newpassword" placeholder="">
                             </div>
@@ -159,14 +159,14 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                               <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
                               <input class="form-control" type="password" name = "confirmpassword" placeholder=""></div>
                           </div>
                         </div>
                       </div>
                       <div class="col-12 col-sm-5 offset-sm-1 mb-3">
-                        <div class="mb-2"><b>Gender</b></div>
+                        <div class="mb-2 mt-1"><b>Gender</b></div>
                         <div class="row">
                           <div class="col">
                             <div class="form-group">
@@ -210,20 +210,72 @@
       </div>
 
       <div class="col-12 col-md-3 mb-3">
-        <div class="card mb-3">
+        
+        
+        <div class="card">
           <div class="card-body">
-            <div class="px-xl-3">
-              <div class = "row"><label>Set Active date</label></div>
-              <div class = "row"><input type = 'date' name = 'active_day' placeholder="{{ data.active_day }}" value = "{{ data.active_day|date:'Y-m-d' }}"></div>
-              <div class = "row"><label>Active Start Time</label></div>
-              <div class = "row"><input type = 'time' name = 'active_time_start' placeholder="{{ data.active_time_start }}" value = "{{ data.active_time_start|time:'H:i' }}"></div>
-              <div class = "row"><label>Active End Time</label></div>
-              <div class = "row"><input type = 'time' name = 'active_time_end' placeholder="{{ data.active_time_end }}" value = "{{ data.active_time_end|time:'H:i' }}"></div>
-            
+            <h6 class="card-title font-weight-bold">Patient List</h6>
+            {% for data in patientlist|slice:":4" %}
+            <div class="card">
+              <img src="{{ data.image.url }}" alt="image" class="card-img">
+              
             </div>
+            
+            <style>
+              .card {
+                display: inline-block;
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                padding: 10px;
+                text-align: center;
+              }
+            
+              .card-img {
+                display: block;
+                margin: 0 auto;
+                width: 28px;
+                height: 25px;
+                border-radius: 50%;
+                object-fit: cover;
+                object-position: center;
+              }
+            
+              .card-name {
+                margin-top: 10px;
+                font-size: 14px;
+                font-weight: bold;
+              }
+            </style>
+            
+            {% endfor %}
+            
+            <a href = "{% url 'showpatients' %}"><button type="button" class="btn btn-primary btn-sm">view more</button></a>
+            <style>
+              .btn-sm {
+                width: 100px; /* Set the desired width here */
+              }
+            </style>
           </div>
         </div>
-        {% for doc in doctor %}
+
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title font-weight-bold">Request Status</h6>
+
+            <a href = "{% url 'patient_accepted' %}"><button type="button" class="btn btn-success btn-sm">Accepted</button></a>
+            <a href = "{% url 'patient_pending' %}"><button type="button" class="btn btn-warning btn-sm mt-1">Pending</button></a>
+            <a href = "{% url 'patient_declined' %}"><button type="button" class="btn btn-danger btn-sm mt-1">Declined</button></a>
+            
+
+            <style>
+              .btn-sm {
+                width: 100px; /* Set the desired width here */
+              }
+            </style>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-body">
             <h6 class="card-title font-weight-bold">Support</h6>
@@ -231,7 +283,7 @@
             <button type="button" class="btn btn-primary">Contact Us</button>
           </div>
         </div>
-        {% endfor %}
+        
       </div>
     </div>
 
