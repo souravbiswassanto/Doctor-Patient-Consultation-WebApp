@@ -18,17 +18,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR/ 'static'
 
-TWILIO_ACCOUNT_SID = 'ACeb8e5f434ab5655c5dc077288f3e6950'
-TWILIO_AUTH_TOKEN = '9545c3f6a991148d899e2e9c6dda1fc1'
-TWILIO_FROM_NUMBER = '+12765660905'
-TWILIO_VERIFY_SERVICE_SID = 'VAa3c787def9e3e9b126df3bfe2e21b99f'
-
-ZOOM_CLIENT_ID = '3uMDgHGSwmUfrMnD07cKQ'
-ZOOM_CLIENT_SECRET = '1uPNwIOxGYE885FjSvXFGrLM7s5Dpb0n'
-ZOOM_USER_ID = 'me'
-
-SSLCOMMERZ_STORE_ID = 'there6422fbc2a5dc9'
-SSLCOMMERZ_STORE_PASSWD = 'there6422fbc2a5dc9@ssl'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
