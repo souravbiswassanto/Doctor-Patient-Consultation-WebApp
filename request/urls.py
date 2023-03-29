@@ -4,12 +4,9 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-    path('Request/', views.Request, name = 'Request'),
-    path('generalrequest/', views.generalrequest, name = 'generalrequest'),
-    path('emgrequest/', views.emgrequest, name = 'emgrequest'),
-    path('laterequest/', views.laterequest, name = 'laterequest'),
-    path('generalrequestaction/', views.generalrequestaction, name = 'generalrequestaction'),
-    path('emgrequestaction/', views.emgrequestaction, name = 'emgrequestaction'),
-    path('laterequestaction/', views.laterequestaction, name = 'laterequestaction'),
-    
+    path('paynow/<fees>/<patid>/<docid>/<meetid>/', views.paynow, name = 'paynow'),
+    path('sslc/status/', views.sslc_status, name = 'sslc_status'),
+    path('payforsub/', views.payforsub, name='payforsub'),    
+    path('substatus/', views.substatus, name = 'substatus'),
 ]
+    

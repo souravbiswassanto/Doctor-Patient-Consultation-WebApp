@@ -9,7 +9,7 @@ class UserDataAdmin(admin.ModelAdmin):
 admin.site.register(Userdata, UserDataAdmin)
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['phone_number', 'role', 'otp_verified']
+    list_display = ['id', 'phone_number', 'role', 'otp_verified']
 
 admin.site.register(UserProfile, UserProfileAdmin)
 

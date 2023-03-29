@@ -83,7 +83,7 @@ def signup(request):
         user_profile = UserProfile.objects.create(user=user, phone_number=phone_number, role=role)
         user_profile.save()
         
-        # Send OTP
+        #Send OTP
         try:
             client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
             verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID).verifications.create(to=phone_number, channel='sms')
@@ -134,6 +134,9 @@ def verify_otp(request):
             user_profile.save()
             user_profile.join_date = timezone.now()
             user_profile.last_seen = timezone.now()
+            userdata = Userdata.objects.create(user_profile = user_profile)
+            userdata.image = str(settings.DEFAULT_IMAGE)
+            userdata.save()
             return redirect('userhome')
         else:
             messages.error(request, 'Invalid OTP')
@@ -207,7 +210,7 @@ def logout_view(request):
 def userprofile(request):
     
     phone_number = request.session.get('phone_number')
-    print (phone_number)
+    #print (phone_number)
     user_profile = UserProfile.objects.get(phone_number = phone_number)
     user_profile.last_seen = timezone.now()
     context = {}
@@ -217,20 +220,22 @@ def userprofile(request):
     
     context['user_profile'] = user_profile
     role = user_profile.role
-    if role == 'user':
+    #print(user_profile,'souravvvvvvvvvvvvvvvvv')
+    #print(type(user_profile))
+    if role == 'user' or role == 'User':
         form = uf.Userform()
-    if role == 'doctor':
+    if role == 'doctor' or role == 'Doctor':
         form = forms.Doctorform()
     #form['user_profile']= user_profile
     context['form'] = form
     data = None
-    if role == 'user':
+    if role == 'user' or role == 'User':
         data = Userdata.objects.get(user_profile = user_profile)
-    if role == 'doctor':
+    if role == 'doctor' or role == 'Doctor':
         data = Doctordata.objects.get(user_profile = user_profile)
-    print (user_profile)
-    print (role)
-    print('user profile printed')
+    #print (user_profile)
+    #print (role)
+    #print('user profile printed')
     context['data'] = data
     doctor = Doctordata.objects.all()
     context['doctor'] = doctor
@@ -238,16 +243,16 @@ def userprofile(request):
     if request.method == 'POST':
         up = None
         userdata = None
-        if role == 'user':
+        if role == 'user' or role == 'User':
             up = Userdata.objects.get(user_profile = user_profile)
             userdata = uf.Userform(request.POST, request.FILES, instance=up)
-        if role == 'doctor':
+        if role == 'doctor' or role == 'Doctor':
             up = Doctordata.objects.get(user_profile = user_profile)
             userdata = forms.Doctorform(request.POST, request.FILES, instance=up)
      
         userdata.user_profile = user_profile
         if userdata.is_valid():
-            print (userdata.cleaned_data['name'])
+            #print (userdata.cleaned_data['name'])
             old_password = userdata.cleaned_data['oldpassword']
             new_password = userdata.cleaned_data['newpassword']
             confirm_password = userdata.cleaned_data['confirmpassword']
@@ -269,7 +274,7 @@ def userprofile(request):
                 return redirect('userprofile')
         return redirect('userprofile')
     
-    if role == 'user' :
+    if role == 'user' or role == 'User':
         return render(request, 'signin/userprofile.html', context)
     else:
         return render(request, 'signin/doctorprofile.html', context)

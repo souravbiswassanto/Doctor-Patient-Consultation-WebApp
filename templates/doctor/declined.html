@@ -1,0 +1,132 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block title %}
+PatientList
+{% endblock %}
+{% block addhead %}
+<style>
+    body {
+        background: #eeeded;
+    }
+
+    .card {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        transition: all 0.2s ease-in-out;
+        box-sizing: border-box;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: #FFF;
+    }
+
+    .card:hover {
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .card>.card-inner {
+        padding: 10px;
+    }
+
+    .card .header h2,
+    h3 {
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+
+    .card .header {
+        margin-bottom: 5px;
+    }
+
+    .card img {
+        width: 100%;
+    }
+
+    .modal {
+        z-index: 9999;
+    }
+
+    body.modal-open {
+        overflow: hidden;
+    }
+</style>
+<!-- Required Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- Required jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Required Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+{% block body %}
+<div class="section-title mt-5">
+    <h2>Reviver</h2>
+    <p>Declined Request</p>
+</div>
+
+<div class="row">
+    {% for ds in resultset %}
+    
+    <div class="col-md-6">
+        <div class="card">
+            
+            <div class="card-body">
+                <div class="row">
+                    {% for data in ds %}
+                    {% if forloop.counter == 1 %}
+                    
+                    <p> Requst Declined at: {{ data.created_at }} </p>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="arrow-right"></div>
+                                <div class="image">
+                                    <img src="{{ data.image.url }}" alt="no image found" style="width: 235px; height: 70px; object-fit: contain; object-position: center;">
+                                </div>
+                                <div class="card-inner text-center">
+                                    <div class="header">
+                                        <div class="row">
+                                            
+                                            <p class = "sm mt-2"> {{ data.name }}</p>
+                                            <h7 class="fw-bold">(Patient)</h7>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="arrow-left"></div>
+                                <div class="image">
+                                    <img src="{{ data.image.url }}" alt="no image found" style="width: 235px; height: 70px; object-fit: contain; object-position: center;">
+                                </div>
+                                <div class="card-inner text-center mt-2">
+                                    <div class="header">
+                                        <div class="row">
+                                            
+                                            <p class = "sm mt-2"> {{ data.name }}</p>
+                                            <h7 class="fw-bold">(Mediator)</h7>
+                                         
+                                                                              </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% endfor %}
+
+</div>
+{% endblock %}

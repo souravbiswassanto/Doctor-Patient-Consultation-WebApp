@@ -9,7 +9,7 @@ from zoomus import ZoomClient
 import urllib.parse
 import requests
 import datetime
-
+from response.models import *
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -20,8 +20,12 @@ from django.conf import settings
 from datetime import datetime, timezone
 import requests
 from django.conf import settings
+from pytz import timezone as pytz_timezone
+from django.utils import timezone
+from request.models import *
 
 def authorize(request):
+    print ('checking testind debugging')
     # Create an instance of the WebApplicationClient class
     client = WebApplicationClient(settings.ZOOM_CLIENT_ID)
 
@@ -29,7 +33,7 @@ def authorize(request):
     redirect_uri = request.build_absolute_uri(reverse('zoom_callback'))
     authorization_url = client.prepare_request_uri(
         'https://zoom.us/oauth/authorize', redirect_uri=redirect_uri)
-
+    print (authorization_url)
     # Redirect the user to the authorization URL
     return redirect(authorization_url)
 
@@ -51,10 +55,10 @@ def zoom_callback(request):
     request.session['zoom_access_token'] = response.json()['access_token']
     print(request.session['zoom_access_token'], "access token")
     # Redirect the user to the meeting page
-    return redirect('create_meeting')
+    return redirect('doctor_pending')
 
 
-def create_zoom_meeting(request,topic, start_time, duration, timezone, password):
+def create_zoom_meeting(request, topic, start_datetime, duration, password):
     # Get the access token from the session
     access_token = request.session['zoom_access_token']
 
@@ -63,23 +67,29 @@ def create_zoom_meeting(request,topic, start_time, duration, timezone, password)
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
-    
     # Set up the data for the API request
     data = {
-    'topic': topic,
-    'type': 2,
-    'start_time': start_time,
-    'duration': duration,
-    'timezone': timezone,
-    'agenda': 'Testing Zoom API',
-    'settings': {
-        'host_video': 'true',
-        'participant_video': 'true',
-        'join_before_host': 'true',
-        'mute_upon_entry': 'false',
-        'auto_recording': 'cloud'
+        'topic': topic,
+        'type': 2,
+        'start_time': start_datetime.astimezone(pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'duration': duration,
+        'agenda': 'Testing Zoom API',
+        'settings': {
+            'host_video': 'true',
+            'participant_video': 'true',
+            'join_before_host': 'true',
+            'mute_upon_entry': 'false',
+            'waiting_room': 'true',
+            'auto_recording': 'cloud',
+            'enforce_login': 'false',
+            'enforce_login_domains': '',
+            'approval_type': 2,
+            'registration_type': 1,
+            'audio': 'voip',
+            'auto_start_recording': 'true'
         }
     }
+    
     # Send a POST request to the Zoom API to create a meeting
     response = requests.post(
         'https://api.zoom.us/v2/users/me/meetings',
@@ -90,75 +100,69 @@ def create_zoom_meeting(request,topic, start_time, duration, timezone, password)
     # Return the response from the API
     return response.json()
 
+    
+    # Send a POST request to the Zoom API to create a meeting
+    response = requests.post(
+        'https://api.zoom.us/v2/users/me/meetings',
+        headers=headers,
+        json=data
+    )
 
+    # Return the response from the API
+    return response.json()
 
-def create_meeting(request):
+import pytz
+from pytz import timezone
+
+def create_meeting(request, userid, patientid, emgreqid):
     # Get the necessary parameters from the request
+    
+    if not request.user.is_authenticated:
+        return redirect ('signin')
+    context = {}
+    userid = int(userid)
+    patientid = int(patientid)
+    emgreqid = int(emgreqid)
+    context['emgreqid'] = emgreqid
+    context['patientid'] = patientid
+    context['userid'] = userid
     if request.method == "POST":
         topic = request.POST.get('topic')
-        start_time = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        start_time_str = request.POST.get('startdatetime')
+        start_time = datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M')
+        tz = pytz.timezone(settings.TIME_ZONE)
+        start_time = tz.localize(start_time)
+        start_time_utc = start_time.astimezone(pytz.utc)
         duration = request.POST.get('duration')
-        tz = settings.TIME_ZONE  # Replace with your own timezone
         password = request.POST.get('password')
-        num_meetings = 2
+        response = create_zoom_meeting(request, topic, start_time_utc, duration, password)
+        print(response)
+        #Redirect the user to the Zoom join URL
+        print(response['join_url'])
+        #user_profile = 
+        
+        print (userid, patientid)
+        doctor_profile = UserProfile.objects.get(user = request.user)
+        print(doctor_profile)
+        creator_profile = UserProfile.objects.get(id = userid)
+        print (creator_profile)
+        patient_profile = Patient.objects.get(id = patientid)
+        print(patient_profile)
+        responseobj = Response.objects.create(doctor_profile = doctor_profile, user_profile = creator_profile, patient_profile = patient_profile)
+        responseobj.doctorack = "Accepted"
+        responseobj.join_url = response['join_url']
+        responseobj.start_meeting_url = response['start_url']
+        responseobj.scheduled_datetime = start_time
+        responseobj.instructions = request.POST.get('instructions')
+        responseobj.meeting_duration = request.POST.get('duration')
+        responseobj.topic = request.POST.get('topic')
+        responseobj.save()
+        emgreqobj = Emgergency.objects.get(id = emgreqid)
+        emgreqobj.status = "Accepted"
+        emgreqobj.save()
+        return redirect('scheduled_meeting')
+    return render(request, 'meeting/create_meeting.html', context)
 
-        # Create the Zoom meetings
-        for i in range(num_meetings):
-            response = create_zoom_meeting(request, f"{topic} {i}", start_time, duration, tz, password)
-            print(response)
-            print(response['join_url'])
-        # Create the Zoom meeting
-        #response = create_zoom_meeting(request,topic, start_time, duration, tz, password)
-        #print (response)
-        # Redirect the user to the Zoom join URL
-        #print(response['join_url'])
-        return redirect(response['join_url'])
-    return render(request, 'meeting/create_meeting.html')
-
-
-def consultation(request):
-    if request.method == 'POST':
-        # Get access token using client id and client secret
-        token_url = "https://zoom.us/oauth/token?grant_type=client_credentials"
-        client_id = settings.ZOOM_CLIENT_ID
-        client_secret = settings.ZOOM_CLIENT_SECRET
-        headers = {'Authorization': 'Basic ' + base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}
-        response = requests.post(token_url, headers=headers)
-        access_token = response.json()['access_token']
-
-        # Create a Zoom meeting
-        meeting_url = f"https://api.zoom.us/v2/users/{settings.ZOOM_USER_ID}/meetings"
-        headers = {'Authorization': f'Bearer {access_token}', 'Content-Type': 'application/json'}
-        data = {
-            "topic": "Consultation Meeting",
-            "type": 2,
-            "duration": 30,
-            "timezone": "Asia/Dhaka",
-            "settings": {
-                "host_video": "true",
-                "participant_video": "true",
-                "join_before_host": "true",
-                "mute_upon_entry": "true",
-                "watermark": "true",
-                "approval_type": 2
-            }
-        }
-        response = requests.post(meeting_url, headers=headers, json=data)
-        print (response.status_code)
-        if response.status_code == 201:
-            meeting_data = response.json()
-            meeting_id = meeting_data['id']
-            join_url = meeting_data['join_url']
-            # Send meeting details to user
-            # You can use your preferred method of communication to send the meeting details to the user
-            # For example, you can send an email to the user with the meeting details.
-            return render(request, 'meeting/consultation.html', {'message': f'Meeting created with meeting ID: {meeting_id} and join URL: {join_url}'})
-        else:
-            print(response.json())  # Print the error message to the console
-            return render(request, 'meeting/consultation.html', {'error': 'Failed to create meeting'})
-    else:
-        # Render the consultation page with user details
-        return render(request, 'meeting/consultation.html')
 
 def conf(request):
     return render(request, 'meeting/conf.html')

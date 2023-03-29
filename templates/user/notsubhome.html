@@ -1,0 +1,334 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block title %}
+home
+{% endblock %}
+
+{% block addhead %}
+<link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+<style>
+  /* Style rules for the round image */
+  .round-image {
+    border-radius: 50%;
+    /* Set the border radius to 50% to make it circular */
+    width: 100px;
+    /* Set the width and height of the image */
+    height: 95px;
+  }
+</style>
+
+<script src="{% static 'assets/js/timer.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  setInterval(function () {
+    $('#doctoridreload').load(location.href + ' #doctoridreload', function (response, status, xhr) {
+      if (status == "error") {
+        console.log("Error loading content: " + xhr.status + " " + xhr.statusText);
+      }
+    });
+  }, 1115000);
+</script>
+
+
+
+<script>
+    // check if user is a subscriber
+var isSubscriber = false; // replace with your code to check if user is a subscriber
+
+// add or remove subscriber class
+if (isSubscriber) {
+  $('#doctoridreload').addClass('subscriber');
+} else {
+  $('#doctoridreload').removeClass('subscriber');
+}
+
+</script>
+
+<style>
+  #doctoridreload:not(.subscriber) .icon-box {
+    filter: blur(5px);
+    pointer-events: none;
+  }
+</style>
+
+{% endblock %}
+{% block body %}
+
+
+
+<!-- ======= Hero Section ======= -->
+
+
+<section id="hero" class="d-flex align-items-center justify-content-center">
+
+  <div class="container" data-aos="fade-up">
+
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="col-xl-6 col-lg-8">
+        <h3 style="color:white">Every Life is Precious<span>.</span></h3>
+      </div>
+
+      <div class="video-container">
+        <a href="{% url 'payforsub' %}"><button type="button btn" class="btn btn-danger" style="width:190px"
+            value="Subscribe">Subscribe</button></a>
+
+      </div>
+      <span style="color:white">How does it work?</span>
+
+    </div>
+
+    <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+      <div class="col-xl-2 col-md-4">
+        <div class="icon-box">
+          <i class="ri-store-line"></i>
+          <h3><a href="#consultnow">Active Doctors!</a></h3>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-md-4">
+        <div class="icon-box">
+          <i class="ri-bar-chart-box-line"></i>
+          <h3><a href="#nearactivedoctor">Active in near future!</a></h3>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-4">
+        <div class="icon-box">
+          <i class="ri-calendar-todo-line"></i>
+          <h3><a href="#all_doctors">General Consultation!</a></h3>
+        </div>
+      </div>
+      {% if user_profile.role == "user" or user_profile.role == "User" %}
+      <div class="col-xl-2 col-md-4">
+        <div class="icon-box">
+          <i class="ri-paint-brush-line"></i>
+          <h3><a href="{% url 'createpatient' %}">Create Patient!</a></h3>
+        </div>
+      </div>
+      {% endif %}
+      {% if user_profile.role == "doctor" or user_profile.role == "Doctor" %}
+      <div class="col-xl-2 col-md-4">
+        <div class="icon-box">
+          <i class="ri-database-2-line"></i>
+          <h3><a href="{% url 'userprofile' %}#activestatdoc">Update active time!</a></h3>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section><!-- End Hero -->
+
+<main id="main">
+
+  <!-- ======= Services Section ======= -->
+  <section id="services" class="services">
+    <div class="container" data-aos="fade-up">
+      {% if messages %}
+      <div
+        class="alert alert-dismissible alert-danger {% for message in messages %}alert-{{ message.tags }}{% endfor %}"
+        role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {% for message in messages %}
+        <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="section-title" id="consultnow">
+        <h2>Reviver</h2>
+        <p>Active Doctors</p>
+      </div>
+
+      <div class="row" id="doctoridreload">
+
+        {% for data in doctors %}
+
+        <div class="col-md-2 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div class="icon-box">
+            <span><img src="/media/{{ data.image }}" alt="image not found" class="round-image"></span>
+            <h5><span> {{ data.name }}<span class="rating"> ({{ data.rating }} <i class="fa fa-star"></i>)</span>
+              </span></h5>
+
+            <div class="doctor-module" data-id="{{ data.id }}">
+              <span>Will able to take requests from:</span>
+              <p><span class="active-time">{{ data.active_time_start }} - {{ data.active_time_end }} </span></p>
+              <div class="countdown-timer"></div>
+            </div>
+            <button class="btn btn-danger"><a href="{% url 'doctor_detail' doctor_id=data.id %}">Consult
+                Now</a></button>
+          </div>
+        </div>
+
+        {% endfor %}
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if doctors.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.previous_page_number }}">&lt;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+            {% endif %}
+
+            {% for i in doctors.paginator.page_range %}
+            {% if doctors.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{ i }} <span
+                  class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if doctors.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.next_page_number }}">&gt;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.paginator.num_pages }}">&raquo;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+
+      </div>
+
+    </div>
+  </section><!-- End Services Section -->
+
+  <!-- ======= Cta Section ======= -->
+  <section id="services" class="services">
+    <div class="container" data-aos="fade-up">
+
+      <div class="section-title" id="nearactivedoctor">
+        <h2>Reviver</h2>
+        <p>Doctors Upcoming Schedule</p>
+      </div>
+
+      <div class="row" id="doctoridreload">
+
+        {% for data in upcoming_doctors %}
+
+        <div class="col-md-2 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div class="icon-box">
+            <span><img src="/media/{{ data.image }}" alt="image not found" class="round-image"></span>
+            <h5><span> {{ data.name }}<span class="rating"> ({{ data.rating }} <i class="fa fa-star"></i>)</span>
+              </span></h5>
+            <div class="doctor-module" data-id="{{ data.id }}">
+              <span>Will able to take requests from:</span>
+              <p><span class="active-time">{{ data.active_time_start }} - {{ data.active_time_end }} </span></p>
+              <div class="countdown-timer"></div>
+            </div>
+            <button class="btn btn-danger"><a href="{% url 'doctor_detail' doctor_id=data.id %}">Consult
+                Now</a></button>
+          </div>
+        </div>
+
+        {% endfor %}
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if doctors.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.previous_page_number }}">&lt;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+            {% endif %}
+
+            {% for i in doctors.paginator.page_range %}
+            {% if doctors.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{ i }} <span
+                  class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if doctors.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.next_page_number }}">&gt;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.paginator.num_pages }}">&raquo;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+
+      </div>
+
+    </div>
+  </section><!-- End Services Section -->
+
+  <section id="services" class="services">
+    <div class="container" data-aos="fade-up">
+
+      <div class="section-title" id="all_doctors">
+        <h2>Reviver</h2>
+        <p>All Doctors</p>
+      </div>
+
+      <div class="row" id="doctoridreloadnot">
+
+        {% for data in alldoctors %}
+
+        <div class="col-md-2 col-lg-3  d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div class="icon-box">
+            <span><img src="/media/{{ data.image }}" alt="image not found" class="round-image"></span>
+            <!-- <div class="icon"><i class="bx bxl-dribbble"></i></div> -->
+            <h5><span> {{ data.name }}<span class="rating"> ({{ data.rating }} <i class="fa fa-star"></i>)</span>
+              </span></h5>
+            <!-- <h5><span> Psychiatrist <div id="timer-{{ forloop.counter }}"></div>
+            </h5> -->
+            <div class="doctor-module" data-id="{{ data.id }}">
+              <span>Will able to take requests from:</span>
+              <p><span class="active-time">{{ data.active_time_start }} - {{ data.active_time_end }} </span></p>
+              <div class="countdown-timer"></div>
+            </div>
+
+
+            <button class="btn btn-danger"><a href="{% url 'doctor_detail' doctor_id=data.id %}">Consult
+                Now</a></button>
+          </div>
+        </div>
+
+        {% endfor %}
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if doctors.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.previous_page_number }}">&lt;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&lt;</a></li>
+            {% endif %}
+
+            {% for i in doctors.paginator.page_range %}
+            {% if doctors.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{ i }} <span
+                  class="sr-only">(current)</span></a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if doctors.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.next_page_number }}">&gt;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ doctors.paginator.num_pages }}">&raquo;</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&gt;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+
+      </div>
+
+    </div>
+  </section><!-- End Services Section -->
+
+
+</main><!-- End #main -->
+
+
+
+{% endblock %}

@@ -1,20 +1,38 @@
 {% extends 'user/base.html' %}
 
 {% block body %}
-    <h1>Consultation Request</h1>
+
+<div class="container my-5 d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-4">Consultation Request</h1>
     {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
+    <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
     {% if message %}
-        <div class="alert alert-success">{{ message }}</div>
+    <div class="alert alert-success">{{ message }}</div>
     {% endif %}
-    <p>User ID: {{ user_id }}</p>
-    <form method="POST" action="{% url 'create_meeting' %}">
+    <form method="POST" action="{% url 'create_meeting' userid=userid patientid=patientid emgreqid=emgreqid %}">
         {% csrf_token %}
-        <label>Topic</label>
-        <input type = "text" name = 'topic' required> 
-        <label>Meeting duration(in minutes)</label>
-        <input type = 'number' name = 'duration' required>
-        <button type="submit" class="btn btn-primary">Accept Consultation Request</button>
+        <div class="form-group mb-3">
+            <label for="topic" class="visually-hidden">Topic</label>
+            <input type="text" class="form-control form-control-sm" name="topic" id="topic" placeholder="Topic"
+                required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="startdatetime" class="visually-hidden">Topic</label>
+            <input type="datetime-local" class="form-control form-control-sm" name="startdatetime" id="startdatetime" placeholder="Schedule Meeting date and time"
+                required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="duration" class="visually-hidden">Meeting duration (in minutes)</label>
+            <input type="number" class="form-control form-control-sm" name="duration" id="duration"
+                placeholder="Duration (in minutes)" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="instructions" class="visually-hidden">Instructions</label>
+            <textarea class="form-control" name = "instructions" rows="3" placeholder="Any instructions for patient?"></textarea>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Schedule Meeting</button>
     </form>
+</div>
 {% endblock %}

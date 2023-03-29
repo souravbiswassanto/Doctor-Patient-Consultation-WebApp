@@ -1,0 +1,136 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block title %} 
+ PatientList
+{% endblock %}
+{% block addhead %}
+<style>
+    body {
+        background: #eeeded;
+      }
+      
+      .card {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.2s ease-in-out;
+        box-sizing: border-box;
+        margin-top:10px;
+        margin-bottom:10px;
+        background-color:#FFF;
+      }
+      
+      .card:hover {
+        box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+      }
+      .card > .card-inner {
+        padding:10px;
+      }
+      .card .header h2, h3 {
+        margin-bottom: 0px;
+        margin-top:0px;
+      }
+      .card .header {
+        margin-bottom:5px;
+      }
+      .card img{
+        width:100%;
+      }
+      .modal {
+        z-index: 9999;
+    }
+    body.modal-open {
+        overflow: hidden;
+    }
+</style>
+<!-- Required Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- Required jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Required Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+{% block body %}
+<div class="section-title mt-5">
+    <h2>Reviver</h2> 
+    <p>Pending For Meeting</p>
+    
+  </div>
+  
+  <div class="row">
+    {% for patient, creator in resultset %}
+      <div class="col-sm-3" data-aos="zoom-in" data-aos-delay="100">
+        <div class="card">
+          <div class="image">
+            <img src="{{ patient.image.url }}" alt="no image found" style="width: 300; height: 100px; object-fit: contain; object-position: center;">
+          </div>
+          <div class="card-inner text-center">
+            <div class="header">
+                <div class = "row">
+                    <h6 class="fw-bold">{{ patient.name }}</h6>
+                </div>
+              
+              <h7>Status : Pending</h7>
+            </div>
+            <div class="content">
+              <!-- Add button that opens the modal window -->
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal{{ patient.id }}">
+                Accept
+              </button>
+              <a href = "{% url 'decline_patient' dec_id=creator.monthly_income %}"><button class = "btn btn-primary">Decline</button></a>
+              <!-- Modal window -->
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    {% for patient, creator in resultset %}
+    <div class="modal fade" id="myModal{{ patient.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">Patient Information</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+
+              <!-- Add form fields for patient information -->
+              
+                
+                <div class="form-group">
+                  <label for="name">Request Host:</label>
+                  <input type="text" class="form-control" id="name" name="name" value="{{ creator.name }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="age">Requested at:</label>
+                    <input type="datetime-local" class="form-control" id="age"  value="{{ patient.created_at|date:'Y-m-d\TH:i:s' }}" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="created_at">Patient's Age:</label>
+                    <input type="number" class="form-control" id="created_at"  value="{{ patient.age }}" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="diagnosis">Diagnosis:</label>
+                  <textarea class="form-control" id="diagnosis" name="diagnosis" required>{{ patient.diagnosis }}</textarea>
+                </div>
+                <div class="form-group col-sm-12">
+                    
+                    <!-- <a href = "{% url 'zoom_authorize' %}"> <button class="btn btn-primary col-sm-4">Create Meeting</button></a> -->
+                    <a href = "{% url 'create_meeting' userid=creator.user_profile patientid=patient.id emgreqid=creator.monthly_income %}"><button class="btn btn-primary col-sm-4">Schedule Meeting</button></a>
+                    <button class="btn btn-primary col-sm-4">View Host</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+  </div>
+
+
+
+  
+  {% endblock %}

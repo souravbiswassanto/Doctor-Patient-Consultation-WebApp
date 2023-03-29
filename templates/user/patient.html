@@ -11,7 +11,8 @@ Create Patient
     <div class="col-md-6">
       <div class="card">
         <div class="card-header">
-          <h4>Enroll a Patient</h4>
+          <h4 class = "text-danger">Enroll a Patient with PatientID <b><em>{{ ID }}</em></b></h4>
+          <b><em><h6 class = "text-primary">Please remember the Patient ID for future use.</h6></em> </b>
         </div>
         <div class="card-body">
           {% if messages %}
@@ -26,6 +27,10 @@ Create Patient
           {% endif %}
           <form method="POST" action="{% url 'createpatient' %}" enctype="multipart/form-data">
             {% csrf_token %}
+            <div class="form-group">
+              <label for="patientid">PatientID</label>
+              <input type="number" class="form-control" id="ptidvai" name="ptidvai" placeholder = "{{ ID }} (Remember this id for future use)" value = "{{ ID }} (Remember this id for future use)" readonly>
+            </div>
             <div class="form-group">
               <label for="name">Name</label>
               <input type="text" class="form-control" id="phone_number" name="name" placeholder="Write Patient's Name" required>

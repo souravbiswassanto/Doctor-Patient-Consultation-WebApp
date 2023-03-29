@@ -1,274 +1,431 @@
 {% extends 'user/base.html' %}
 
-{% block title %} 
- Profile
+{% block title %}
+Profile
 {% endblock %}
 
 {% block addhead %}
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <style>
-    body{
-        margin-top:20px;
-        background:#f8f8f8
-    }
+  body {
+    margin-top: 20px;
+    background: #f8f8f8
+  }
 </style>
 
 {% endblock %}
 
 {% block body %}
+
+
 <form method="POST" action="{% url 'userprofile' %}" enctype="multipart/form-data">
   {% csrf_token %}
-<div class="container">
-<div class="row flex-lg-nowrap">
-  <div class="col-12 col-lg-auto mb-3" style="width: 200px;">
-    <div class="card p-3">
-      <div class="e-navlist e-navlist--active-bg">
-        <ul class="nav">
-          <li class="nav-item"><a class="nav-link px-2 active" href="#"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>Overview</span></a></li>
-          <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-crud-users" target="__blank"><i class="fa fa-fw fa-th mr-1"></i><span>CRUD</span></a></li>
-          <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-edit-profile-page" target="__blank"><i class="fa fa-fw fa-cog mr-1"></i><span>Settings</span></a></li>
-        </ul>
-        
+  <div class="container">
+    <div class="row flex-lg-nowrap">
+      <div class="col-12 col-lg-auto mb-3" style="width: 200px;">
+        <div class="card p-3">
+          <div class="e-navlist e-navlist--active-bg">
+            <ul class="nav">
+              <li class="nav-item"><a class="nav-link px-2 active" href="#"><i
+                    class="fa fa-fw fa-bar-chart mr-1"></i><span>Overview</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-crud-users"
+                  target="__blank"><i class="fa fa-fw fa-th mr-1"></i><span>CRUD</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2"
+                  href="https://www.bootdey.com/snippets/view/bs4-edit-profile-page" target="__blank"><i
+                    class="fa fa-fw fa-cog mr-1"></i><span>Settings</span></a></li>
+            </ul>
+
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="col">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="row">
-                <div class="col-12 col-sm-auto mb-3">
-                  <div class="mx-auto" style="width: 140px;">
-                    <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
-                      <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;"><img src = "{{ data.image.url }}" width="140px" height="140px" ></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
-                  <div class="text-center text-sm-left mb-2 mb-sm-0">
-                    <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ data.name }}</h4>
-                    <p class="mb-0">{{ data.user_profile }}</p>
-                    <div class="text-muted"><small> Last seen at {{ user_profile.last_seen }} </small></div>
-                    <div class="mt-2">
 
-                      <!-- Hidden file input element -->
-                      
-                      <!-- Script to trigger file input on button click -->
-                      
-                      <button class="btn btn-primary" type="button" id="change-photo-button">
-                        <i class="fa fa-fw fa-camera"></i>
-                        <span>Change Photo</span>
-                      </button>
-                      <input type="file" name="image" id="photo-input" style="display: none;">
-                      
-                      <script>
-                        document.getElementById("change-photo-button").addEventListener("click", function() {
-                            document.getElementById("photo-input").click();
-                        });
-                    </script>
-                    </div>
-                  </div>
-                  <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">administrator</span>
-                    <div class="text-muted"><small>Joined {{ user_profile.join_date }}</small></div>
-                  </div>
-                </div>
-              </div>
-              <ul class="nav nav-tabs">
-                <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
-              </ul>
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form class="form" novalidate="">
-                    <div class="row">
-                      <div class="col">
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Full Name</label>
-                              <input class="form-control" type="text" name="name" placeholder="{{ data.name }}" value="{{ data.name }}" required>
-                            </div>
-                          </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Date of Birth</label>
-                              <input class="form-control" type="date" name="dob" placeholder="{{ data.dob|date:'Y-m-d' }}"value="{{ data.dob|date:'Y-m-d' }}" required>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Email</label>
-                              <input class="form-control" name = 'doctoremail' type="email" placeholder="{{ data.doctoremail }}" value = "{{ data.doctoremail }}">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Registration Num</label>
-                              <input class="form-control" type="text" name="regnum" placeholder="{{ data.regnum }}" value="{{ data.regnum }}" >
-                            </div>
-                          </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Degrees</label>
-                              <input class="form-control" type="text" name="degrees" placeholder="{{ data.degrees }}"value="{{ data.degrees }}">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Chamber Address</label>
-                              <input class="form-control" type="text" name="chamberaddress" placeholder="{{ data.chamberaddress }}" value="{{ data.chamberaddress }}" >
-                            </div>
-                          </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label>NID</label>
-                              <input class="form-control" type="number" name="NID" placeholder="{{ data.NID }}"value="{{ data.NID }}">
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Working Hospital</label>
-                              <input class="form-control" type="text" name="working_hospital" placeholder="{{ data.working_hospital }}" value="{{ data.working_hospital }}" >
-                            </div>
-                          </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Designation</label>
-                              <input class="form-control" type="text" name="designation" placeholder="{{ data.designation }}"value="{{ data.designation }}">
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="row">
-                          <div class="col mb-3">
-                            <div class="form-group">
-                              <label>About</label>
-                              <textarea class="form-control" name = "bio" rows="5" placeholder="{{ data.bio }}">{{ data.bio }}</textarea>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <input type="hidden" name="user_profile" value="{{ data.user_profile }}">
-                      <div class="col-12 col-sm-6 mb-3">
-                        <div class="mb-2"><b>Change Password</b></div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>inside Current Password</label>
-                              <input class="form-control" type="password" name = "oldpassword" placeholder="" >
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>New Password</label>
-                              <input class="form-control" type="password" name = "newpassword" placeholder="">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
-                              <input class="form-control" type="password" name = "confirmpassword" placeholder=""></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-12 col-sm-5 offset-sm-1 mb-3">
-                        <div class="mb-2"><b>Gender</b></div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <select class="form-select" name = "gender" aria-label="Default select example">
-                                {% if not data.gender %}<option selected>Open this select menu</option>{% endif %}
-                                {% if data.gender %}<option selected>{{ data.gender }}</option>{% endif %}
-
-                                <option value="male">male</option>
-                                <option value="female">female</option>
-                                <option value="other">other</option>
-                              </select>
-                          </div>
-                          
-                          
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col d-flex justify-content-end">
-                        <button class="btn btn-primary" type="submit">Save Changes</button>
-                      </div>
-                    </div>
-
-                    {% if messages %}
-          <ul class="messages">
+      <div class="col">
+        {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+          <ul class="messages list-unstyled mb-0">
             {% for message in messages %}
-              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
+            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+              {% endfor %}
           </ul>
-        {% endif %}
-                  </form>
 
+        </div>
+        {% endif %}
+        <div class="row">
+          <div class="col mb-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="e-profile">
+                  <div class="row">
+                    <div class="col-12 col-sm-auto mb-3">
+                      <div class="mx-auto" style="width: 140px;">
+                        <div class="d-flex justify-content-center align-items-center rounded"
+                          style="height: 140px; background-color: rgb(233, 236, 239);">
+                          <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;"><img src="{{ data.image.url }}"
+                              width="140px" height="140px"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                      <div class="text-center text-sm-left mb-2 mb-sm-0">
+
+                        <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ data.name }}</h4>
+                        <p class="mb-0">{{ data.user_profile }}</p>
+                        <div class="text-muted"><small> Last seen at {{ user_profile.last_seen }} </small></div>
+                        <div class="mt-2">
+
+                          <!-- Hidden file input element -->
+
+                          <!-- Script to trigger file input on button click -->
+
+                          <button class="btn btn-primary" type="button" id="change-photo-button">
+                            <i class="fa fa-fw fa-camera"></i>
+                            <span>Change Photo</span>
+                          </button>
+                          <input type="file" name="image" id="photo-input" style="display: none;">
+
+                          <script>
+                            document.getElementById("change-photo-button").addEventListener("click", function () {
+                              document.getElementById("photo-input").click();
+                            });
+                          </script>
+                        </div>
+                      </div>
+                      <div class="text-center text-sm-right">
+                        <span class="badge badge-secondary">administrator</span>
+                        <div class="text-muted"><small>Joined {{ user_profile.join_date }}</small></div>
+                      </div>
+                    </div>
+                  </div>
+                  <ul class="nav nav-tabs">
+                    <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
+                  </ul>
+                  <div class="tab-content pt-3">
+                    <div class="tab-pane active">
+                      <form class="form" novalidate="">
+                        <div class="row">
+                          <div class="col">
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Full Name</label>
+                                  <input class="form-control" type="text" name="name" placeholder="{{ data.name }}"
+                                    value="{{ data.name }}" required>
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Date of Birth</label>
+                                  <input class="form-control" type="date" name="dob"
+                                    placeholder="{{ data.dob|date:'Y-m-d' }}" value="{{ data.dob|date:'Y-m-d' }}"
+                                    required>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Email</label>
+                                  <input class="form-control" name='doctoremail' type="email"
+                                    placeholder="{{ data.doctoremail }}" value="{{ data.doctoremail }}">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Registration Num</label>
+                                  <input class="form-control" type="text" name="regnum" placeholder="{{ data.regnum }}"
+                                    value="{{ data.regnum }}">
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Degrees</label>
+                                  <input class="form-control" type="text" name="degrees"
+                                    placeholder="{{ data.degrees }}" value="{{ data.degrees }}">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Chamber Address</label>
+                                  <input class="form-control" type="text" name="chamberaddress"
+                                    placeholder="{{ data.chamberaddress }}" value="{{ data.chamberaddress }}">
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>NID</label>
+                                  <input class="form-control" type="number" name="NID" placeholder="{{ data.NID }}"
+                                    value="{{ data.NID }}">
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Working Hospital</label>
+                                  <input class="form-control" type="text" name="working_hospital"
+                                    placeholder="{{ data.working_hospital }}" value="{{ data.working_hospital }}">
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Designation</label>
+                                  <input class="form-control" type="text" name="designation"
+                                    placeholder="{{ data.designation }}" value="{{ data.designation }}">
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col mb-3">
+                                <div class="form-group">
+                                  <label>About</label>
+                                  <textarea class="form-control" name="bio" rows="5"
+                                    placeholder="{{ data.bio }}">{{ data.bio }}</textarea>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <input type="hidden" name="user_profile" value="{{ data.user_profile }}">
+                          <div class="col-12 col-sm-6 mb-3">
+                            <div class="mb-2"><b>Change Password</b></div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>inside Current Password</label>
+                                  <input class="form-control" type="password" name="oldpassword" placeholder="">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>New Password</label>
+                                  <input class="form-control" type="password" name="newpassword" placeholder="">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                  <input class="form-control" type="password" name="confirmpassword" placeholder="">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 col-sm-5 offset-sm-1 mb-3">
+
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label class="mt-4">Gender</label>
+                                  <select class="form-select" name="gender" aria-label="Default select example">
+                                    {% if not data.gender %}<option selected>Open this select menu</option>{% endif %}
+                                    {% if data.gender %}<option selected>{{ data.gender }}</option>{% endif %}
+
+                                    <option value="male">male</option>
+                                    <option value="female">female</option>
+                                    <option value="other">other</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <labe class="mt-2"> Registration Type </labe>
+                                  <select class="form-select" name="regtype" aria-label="Default select example">
+                                    {% if not data.regtype %}<option selected>Open this select menu</option>{% endif %}
+                                    {% if data.regtype %}<option selected>{{ data.regtype }}</option>{% endif %}
+
+                                    <option value="medical">medical</option>
+                                    <option value="dental">dental</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <labe class="mt-2"> Fees </labe> <br>
+                                  <input type="number" name='visits' value="{{ data.visits }}">
+                                </div>
+
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit">Save Changes</button>
+                          </div>
+                        </div>
+
+
+                      </form>
+
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="col-12 col-md-3 mb-3">
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="px-xl-3">
-              <div class = "row"><label>Set Active date</label></div>
-              <div class = "row"><input type = 'date' name = 'active_day' placeholder="{{ data.active_day }}" value = "{{ data.active_day|date:'Y-m-d' }}"></div>
-              <div class = "row"><label>Active Start Time</label></div>
-              <div class = "row"><input type = 'time' name = 'active_time_start' placeholder="{{ data.active_time_start }}" value = "{{ data.active_time_start|time:'H:i' }}"></div>
-              <div class = "row"><label>Active End Time</label></div>
-              <div class = "row"><input type = 'time' name = 'active_time_end' placeholder="{{ data.active_time_end }}" value = "{{ data.active_time_end|time:'H:i' }}"></div>
-            
+          <div class="col-12 col-md-3 mb-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="px-xl-3">
+                  <div class="row" id = "activestatdoc"><label>Set Active date</label></div>
+                  <div class="row"><input type='date' name='active_day' placeholder="{{ data.active_day }}"
+                      value="{{ data.active_day|date:'Y-m-d' }}"></div>
+                  <div class="row"><label>Active Start Time</label></div>
+                  <div class="row"><input type='time' name='active_time_start'
+                      placeholder="{{ data.active_time_start }}" value="{{ data.active_time_start|time:'H:i' }}"></div>
+                  <div class="row"><label>Active End Time</label></div>
+                  <div class="row"><input type='time' name='active_time_end' placeholder="{{ data.active_time_end }}"
+                      value="{{ data.active_time_end|time:'H:i' }}"></div>
+
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title font-weight-bold">Requests Pending!</h6>
-            <p class="card-text"></p>
-            <button type="button" class="btn btn-primary">Contact Us</button>
+
+
+            <div class="card mt-3">
+              <div class="card-body">
+                <h6 class="card-title font-weight-bold">Request Status</h6>
+
+                <a href="{% url 'doctor_accepted' %}"><button type="button"
+                    class="btn btn-success btn-sm">Accepted</button></a>
+                <a href="{% url 'zoom_authorize' %}"><button type="button"
+                    class="btn btn-warning btn-sm mt-1">Pending</button></a>
+                <a href="{% url 'doctor_declined' %}"><button type="button"
+                    class="btn btn-danger btn-sm mt-1">Declined</button></a>
+
+                <style>
+                  .btn-sm {
+                    width: 100px;
+                    /* Set the desired width here */
+                  }
+                </style>
+                <style>
+                  .card {
+                    display: inline-block;
+                    background-color: white;
+                    border-radius: 5px;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                    padding: 10px;
+                    text-align: center;
+                  }
+
+                  .card-img {
+                    display: block;
+                    margin: 0 auto;
+                    width: 28px;
+                    height: 25px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    object-position: center;
+                  }
+
+                  .card-name {
+                    margin-top: 10px;
+                    font-size: 14px;
+                    font-weight: bold;
+                  }
+                </style>
+              </div>
+            </div>
+
+            <div class="card mt-3">
+              <div class="card-body">
+                <b><h6 class="card-title font-weight-bold">Open Room</h6></b>
+                <h8 class = "card-title font-weight-bold">Room contains the documents required for hosting a meeting.</h8>
+                 <a href = "{% url 'openroom' %}"><button type="button" class="btn btn-danger btn-sm mt-1">Go</button></a>
+                  <style>
+                    .btn-sm {
+                      width: 100px;
+                      /* Set the desired width here */
+                    }
+                  </style>
+                  <style>
+                    .card {
+                      display: inline-block;
+                      background-color: white;
+                      border-radius: 5px;
+                      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                      padding: 10px;
+                      text-align: center;
+                    }
+
+                    .card-img {
+                      display: block;
+                      margin: 0 auto;
+                      width: 28px;
+                      height: 25px;
+                      border-radius: 50%;
+                      object-fit: cover;
+                      object-position: center;
+                    }
+
+                    .card-name {
+                      margin-top: 10px;
+                      font-size: 14px;
+                      font-weight: bold;
+                    }
+                  </style>
+              </div>
+            </div>
+
+            <div class="card mt-3">
+              <div class="card-body">
+                <h6 class="card-title font-weight-bold">View Scheduled Response</h6>
+                <a href="{% url 'scheduled_meeting' %}"> <button type="button" class="btn btn-primary">Click
+                    Here</button> </a>
+                <style>
+                  .btn-sm {
+                    width: 100px;
+                    /* Set the desired width here */
+                  }
+                </style>
+                <style>
+                  .card {
+                    display: inline-block;
+                    background-color: white;
+                    border-radius: 5px;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                    padding: 10px;
+                    text-align: center;
+                  }
+
+                  .card-img {
+                    display: block;
+                    margin: 0 auto;
+                    width: 28px;
+                    height: 25px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    object-position: center;
+                  }
+
+                  .card-name {
+                    margin-top: 10px;
+                    font-size: 14px;
+                    font-weight: bold;
+                  }
+                </style>
+
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title font-weight-bold">Support</h6>
-            <p class="card-text">Get fast, free help from our friendly assistants.</p>
-            <button type="button" class="btn btn-primary">Contact Us</button>
-          </div>
-        </div>
-        
       </div>
     </div>
-
   </div>
-</div>
-</div>
 </form>
+
+
 {% endblock %}

@@ -42,7 +42,7 @@ class Doctordata(models.Model):
     active_time_end = models.TimeField(null = True, blank = True)
     active_day = models.DateField(blank = True, null = True)
     visits = models.IntegerField(blank = True, null = True)
-    
+    rating = models.DecimalField(max_digits = 2, default = 0.0, decimal_places=1)
     def __str__(self):
         return self.name
     

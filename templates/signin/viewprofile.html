@@ -61,7 +61,7 @@ Profile
                   <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
                     <div class="text-center text-sm-left mb-2 mb-sm-0">
                       <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ data.name }}</h4>
-                      <p class="mb-0">{{ data.user_profile }}</p>
+                      <p class="mb-0">{{ user.id }}</p>
                       <div class="text-muted"><small> Last seen at {{ user_profile.last_seen }} </small></div>
                       <div class="mt-2">
 
@@ -126,135 +126,56 @@ Profile
                   </div>
                 </div>
                 <ul class="nav nav-tabs">
-                  <li class="nav-item"><a href="" class="active nav-link">Settings</a></li>
+                  <li class="nav-item"><a href="" class="active nav-link">Profile</a></li>
                 </ul>
-                <div class="tab-content pt-3">
-                  <div class="tab-pane active">
-                    <form class="form" novalidate="">
-                      <div class="row">
-                        <div class="col">
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Full Name</label>
-                                <input class="form-control" type="text" name="name" placeholder="{{ data.name }}"
-                                  value="{{ data.name }}" readonly>
-                              </div>
-                            </div>
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Date of Birth</label>
-                                <input class="form-control" type="date" name="dob"
-                                  placeholder="{{ data.dob|date:'Y-m-d' }}" value="{{ data.dob|date:'Y-m-d' }}"
-                                  readonly>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Occupation</label>
-                                <input class="form-control" type="text" name="occupation"
-                                  placeholder="{{ data.occupation }}" value="{{ data.occupation }}">
-                              </div>
-                            </div>
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Monthly Income</label>
-                                <input class="form-control" type="number" name="monthly_income"
-                                  placeholder="{{ data.monthly_income }}" value="{{ data.monthly_income }}" readonly>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Address</label>
-                                <input class="form-control" type="text" name="address" placeholder="{{ data.address }}"
-                                  value="{{ data.address }}" readonly>
-                              </div>
-                            </div>
-                            <div class="col">
-                              <div class="form-group">
-                                <label>NID</label>
-                                <input class="form-control" type="text" name="NID" placeholder="{{ data.NID }}"
-                                  value="{{ data.NID }}" readonly>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label>About</label>
-                                <textarea class="form-control" name="bio" rows="5" placeholder="{{ data.bio }}"
-                                  disabled>{{ data.bio }}</textarea>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <input type="hidden" name="user_profile" value="{{ data.user_profile }}">
-                        <div class="col-12 col-sm-6 mb-3">
-                          <div class="mb-2"><b>Change Password</b></div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Current Password</label>
-                                <input class="form-control" type="password" name="oldpassword" placeholder="">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>New Password</label>
-                                <input class="form-control" type="password" name="newpassword" placeholder="">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
-                                <input class="form-control" type="password" name="confirmpassword" placeholder="">
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-sm-5 offset-sm-1 mb-3">
-                          <div class="mb-2"><b>Gender</b></div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <select class="form-select" name="gender" aria-label="Default select example">
-                                  {% if not data.gender %}<option selected>Open this select menu</option>{% endif %}
-                                  {% if data.gender %}<option selected>{{ data.gender }}</option>{% endif %}
-
-                                  <option value="male">male</option>
-                                  <option value="female">female</option>
-                                  <option value="other">other</option>
-                                </select>
-                              </div>
-
-
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col d-flex justify-content-end">
-                          <!-- <button class="btn btn-primary" type="submit">Save Changes</button> -->
-                        </div>
-                      </div>
-
-
-
-
+                <div class="card border-secondary">
+                  <div class="card-body">
+                    <h5 class="card-title">Doctor Profile</h5>
+                    <hr>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Email:</strong></div>
+                      <div class="col-md-8"><span id="doc-email" class="form-control">{{ data.doctoremail }}</span></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Registration Type:</strong></div>
+                      <div class="col-md-8"><span id="reg-type" class="form-control">{{ data.regtype }}</span></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Registration Number:</strong></div>
+                      <div class="col-md-8"><span id="reg-num" class="form-control"> {{ data.regnum }}</span></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Bio:</strong></div>
+                      <div class="col-md-8"><textarea id="bio" class="form-control" rows="3"> {{ data.bio }}</textarea></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Working Hospital:</strong></div>
+                      <div class="col-md-8"><span id="hospital" class="form-control">{{ data.working_hospital }}</span></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Designation:</strong></div>
+                      <div class="col-md-8"><span id="designation" class="form-control">{{ data.designation }}</span></div>
+                    </div>
+                
+                    <div class="row mt-2">
+                      <div class="col-md-4"><strong>Chamber Address:</strong></div>
+                      <div class="col-md-8"><span id="chamber-address" class="form-control"> {{ data.chamberaddress }}</span></div>
+                    </div>
+                
                   </div>
                 </div>
+                
+                
+                
+                
+                
+                
               </div>
             </div>
           </div>
@@ -264,21 +185,19 @@ Profile
           <div class="card mb-3">
             <div class="card-body">
               <div class="px-xl-3">
-                <button class="btn btn-block btn-secondary">
-                  <i class="fa fa-sign-out"></i>
-                  <span>Logout</span>
-                </button>
+                <div class="row" id = "activestatdoc"><label>Set Active date</label></div>
+                <div class="row"><input type='date' name='active_day' placeholder="{{ data.active_day }}"
+                    value="{{ data.active_day|date:'Y-m-d' }}"></div>
+                <div class="row"><label>Active Start Time</label></div>
+                <div class="row"><input type='time' name='active_time_start'
+                    placeholder="{{ data.active_time_start }}" value="{{ data.active_time_start|time:'H:i' }}"></div>
+                <div class="row"><label>Active End Time</label></div>
+                <div class="row"><input type='time' name='active_time_end' placeholder="{{ data.active_time_end }}"
+                    value="{{ data.active_time_end|time:'H:i' }}"></div>
+
               </div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-body">
-              <h6 class="card-title font-weight-bold">Support</h6>
-              <p class="card-text">Get fast, free help from our friendly assistants.</p>
-              <button type="button" class="btn btn-primary">Contact Us</button>
-            </div>
-          </div>
-        </div>
       </div>
 
     </div>

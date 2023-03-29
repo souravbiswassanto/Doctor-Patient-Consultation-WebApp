@@ -50,10 +50,12 @@ class UserProfile(models.Model):
     otp_verified = models.BooleanField(default= False)
     join_date = models.DateField(blank = True, null = True)
     last_seen = models.DateTimeField(blank=True, null=True)
+    is_sub = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'phone_number'
     objects = UserProfileManager()
     def __str__(self):
-        return self.user.username
+        return str(self.id)
 
 
 class Userdata(models.Model):
@@ -79,7 +81,9 @@ class Userdata(models.Model):
     active_time_start = models.TimeField(null = True, blank = True)
     active_time_end = models.TimeField(null = True, blank = True)
     active_day = models.DateField(blank = True, null = True)
-    
+    subscribe = models.DateField(blank = True, null = True)
+    meeting_count = models.IntegerField(blank = True, null = True, default=0)
+    is_sub = models.BooleanField(default=False)
     def __str__(self):
         return str(self.user_profile)
     
@@ -120,6 +124,7 @@ class Patient(models.Model):
         super().__init__(*args, **kwargs)
         if user_profile:
             self.instance.user_profile = user_profile
+            
 class Review(models.Model):
     reviewid = models.AutoField
     userid = models.ForeignKey(Userdata, on_delete=models.CASCADE)

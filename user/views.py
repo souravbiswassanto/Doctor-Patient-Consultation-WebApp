@@ -58,11 +58,14 @@ def userhome(request):
     phone_number = request.session.get('phone_number')
     print('phone number: ', phone_number)
     print(request.session)
+    check = False
     if request.user.is_authenticated:
         try:
             user_profile = UserProfile.objects.get(user=request.user, otp_verified=True)
             print (user_profile)
             context['user_profile'] = user_profile
+            if user_profile.is_sub:
+                check = True
         except UserProfile.DoesNotExist:
             pass 
     
@@ -72,8 +75,10 @@ def userhome(request):
     #     context['user_profile'] = user_profile
     # except UserProfile.DoesNotExist:
     #     pass
-    
-    return render(request, 'user/finalhome.html', context)
+    if check:
+        return render(request, 'user/finalhome.html', context)
+    else:
+        return render(request, 'user/notsubhome.html', context)
 
 def doctor_detail(request, doctor_id):
     if request.user.is_authenticated != True or request.user == None:
@@ -159,14 +164,17 @@ def form(request):
     return render(request, 'user/form.html', context=dict)
 
 def createpatient(request):
-    print ('helelll ldljd dl',request.user)
     if request.user is None:
         return redirect('signin')
     context = {}
     form = user_form.Patientform()
     context['form'] = form
     user_profile = UserProfile.objects.get(user = request.user)
-    context['user_profile'] = user_profile    
+    context['user_profile'] = user_profile
+    if Patient.objects.exists():
+        context['ID'] = Patient.objects.last().id  + 1
+    else :
+        context['ID'] = 1  
     if request.method == "POST":
         print ("okayy")
         form = user_form.Patientform(request.POST, request.FILES, user_profile)
@@ -325,6 +333,7 @@ def patient_pending(request):
         doctor_data = Doctordata.objects.get(user_profile=ds.doctor_profile)
         
         lst.append(doctor_data)
+        
         datas.append(lst)
     
     context['resultset'] = datas
@@ -353,3 +362,5 @@ def patient_declined(request):
     
     context['resultset'] = datas
     return render(request, 'user/declined.html', context)
+
+

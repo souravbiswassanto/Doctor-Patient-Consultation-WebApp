@@ -1,0 +1,79 @@
+{% extends 'user/base.html' %}
+
+{% block title %} 
+ Room
+{% endblock %}
+
+{% block addhead %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    body{
+        margin-top:20px;
+        background:#f8f8f8
+    }
+</style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+          <ul class="messages list-unstyled mb-0">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+              {% endfor %}
+          </ul>
+
+        </div>
+        {% endif %}
+    <h4>Uploaded documents(pdf file)</h4>
+    {% for file in datas %}
+<div class="card mb-1">
+  <div class="card-body d-flex align-items-center justify-content-between">
+    <div>
+      <h5 class="card-title mb-0">{{ file.filename }}</h5>
+      <p class="card-text mb-0"><a href="{{ file.pdf_file.url }}" download>Download</a></p>
+    </div>
+    <form method="post" action="{% url 'dltfile' file_id=file.id ptid=patientfileid mtid=meetingfileid %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+    </form>
+  </div>
+</div>
+{% endfor %}
+
+
+      
+  </div>
+
+  
+
+    <div class="container">
+      <form method="POST" action = "{% url 'room' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card mb-1">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="text-1">Filename</label>
+              <input type="hidden" name="patientfileid" class="form-control" id="text-1" value = "{{ patientfileid }}">
+              <input type="hidden" name="meetingfileid" class="form-control" id="text-1" value = "{{ meetingfileid }}">
+              <input type = "hidden" name = "firsttime" value = "{{ 0 }}">
+
+              <input type="text" name="filename" class="form-control" id="text-1" placeholder="Enter the details of the file">
+            </div>
+            <div class="form-group">
+              <label for="file-1">Upload File</label>
+              <input type="file" name="pdf_file" class="form-control-file" id="file-1">
+            </div>
+          </div>
+        </div>
+        <div id="extra-fields">
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+      </form>
+    </div>
+    
+
+    {% endblock %}
