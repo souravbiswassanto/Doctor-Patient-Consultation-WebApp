@@ -19,6 +19,7 @@ TEMPLATES_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR/ 'static'
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -29,7 +30,6 @@ SECRET_KEY = 'django-insecure-$+-9^^^zkl-m!hlhij_3ob!kgl)2uk4(67((su8#v2*0ffxr5s
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 

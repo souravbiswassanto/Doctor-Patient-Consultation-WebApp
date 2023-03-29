@@ -96,6 +96,8 @@ def doctor_detail(request, doctor_id):
     context['data'] = doctordata
     context['user_profile'] = doctordata.user_profile
     form = request_form.Emgreqform()
+    patientobj = Patient.objects.filter(user_profile = sender_user_profile)
+    context['patientobj'] = patientobj
     context['form'] = form
     current_time = timezone.now()
     dhaka = pytz_timezone('Asia/Dhaka')
@@ -131,7 +133,7 @@ def doctor_detail(request, doctor_id):
             data.save()
             messages.success(request, 'Your request has been sent successfully')
             
-            return redirect('patient_accepted')
+            return redirect('patient_pending')
         else:
             messages.error(request, 'something went wrong')
             return redirect('userhome')

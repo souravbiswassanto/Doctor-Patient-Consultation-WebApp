@@ -240,25 +240,30 @@ def userprofile(request):
     doctor = Doctordata.objects.all()
     context['doctor'] = doctor
     
+    #user_profile.join_date = timezone.now()
+    #user_profile.last_seen = timezone.now()
     if request.method == 'POST':
         up = None
         userdata = None
+        
         if role == 'user' or role == 'User':
             up = Userdata.objects.get(user_profile = user_profile)
             userdata = uf.Userform(request.POST, request.FILES, instance=up)
         if role == 'doctor' or role == 'Doctor':
             up = Doctordata.objects.get(user_profile = user_profile)
             userdata = forms.Doctorform(request.POST, request.FILES, instance=up)
-     
+
         userdata.user_profile = user_profile
+        
         if userdata.is_valid():
             #print (userdata.cleaned_data['name'])
             old_password = userdata.cleaned_data['oldpassword']
             new_password = userdata.cleaned_data['newpassword']
             confirm_password = userdata.cleaned_data['confirmpassword']
-            
-            if old_password == None:
+            print (old_password, 'user id')
+            if old_password is None:
                 userdata.save(commit=True)
+                print ('user ')
                 return redirect('userprofile')
             
             if not request.user.check_password(old_password):

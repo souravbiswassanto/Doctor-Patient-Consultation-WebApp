@@ -32,7 +32,7 @@ class Doctordata(models.Model):
     bio = models.TextField(null = True, blank = True)
     degrees = models.CharField(max_length = 200, null = True, blank = True)
     working_hospital = models.CharField(max_length = 200, null = True, blank = True)
-    designation = models.CharField(max_length = 200,blank = True, null = True)
+    designation = models.CharField(max_length = 200, blank = True, null = True)
     latenightstatus = models.CharField(max_length=30, blank=True, null=True, choices=latenight)
     chamberaddress = models.CharField(max_length = 200, null = True, blank = True)
     oldpassword = models.CharField(max_length=128, null = True, blank = True)
@@ -42,7 +42,7 @@ class Doctordata(models.Model):
     active_time_end = models.TimeField(null = True, blank = True)
     active_day = models.DateField(blank = True, null = True)
     visits = models.IntegerField(blank = True, null = True)
-    rating = models.DecimalField(max_digits = 2, default = 0.0, decimal_places=1)
+    rating = models.DecimalField(max_digits = 2, default = 0.0, decimal_places=1, blank = True, null = True)
     def __str__(self):
         return self.name
     
