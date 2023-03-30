@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django_otp import devices_for_user
 import random
+from decimal import Decimal
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp import user_has_device
 from django.utils import timezone
@@ -23,6 +24,10 @@ from doctor import forms
 from django.contrib.auth import update_session_auth_hash
 
 def signup(request):
+    if request.user is not None and request.user.is_authenticated:
+        messages.error(request, 'You are already signed in.')
+        return redirect('userhome')
+    
     if request.method == 'POST':
         # Get form values
         phone_number = request.POST['phone_number']
@@ -100,6 +105,8 @@ def signup(request):
 
 
 def verify_otp(request):
+    
+    
     if request.method == 'POST':
         phone_number = request.session.get('phone_number')
         otp = request.POST.get('otp')
@@ -112,6 +119,9 @@ def verify_otp(request):
             messages.error(request, 'Invalid phone number')
             return redirect('signup')
         try:
+            if user_profile.otp_verified:
+                messages.error(request, "You have already verified your phone number.")
+                return redirect(request, 'signin')
             account_sid = settings.TWILIO_ACCOUNT_SID
             auth_token = settings.TWILIO_AUTH_TOKEN
             client = Client(account_sid, auth_token)
@@ -134,9 +144,14 @@ def verify_otp(request):
             user_profile.save()
             user_profile.join_date = timezone.now()
             user_profile.last_seen = timezone.now()
-            userdata = Userdata.objects.create(user_profile = user_profile)
-            userdata.image = str(settings.DEFAULT_IMAGE)
-            userdata.save()
+            if user_profile.role == 'doctor' or user_profile.role == 'Doctor':
+                userdata = Doctordata.objects.create(user_profile = user_profile)
+                userdata.image = str(settings.DEFAULT_IMAGE)
+                userdata.save()
+            if user_profile.role == 'user' or user_profile.role == 'User':   
+                userdata = Userdata.objects.create(user_profile = user_profile)
+                userdata.image = str(settings.DEFAULT_IMAGE)
+                userdata.save()
             return redirect('userhome')
         else:
             messages.error(request, 'Invalid OTP')
@@ -148,6 +163,8 @@ def verify_otp(request):
 
 
 def resend_otp(request):
+    
+    
     phone_number = request.session.get('phone_number')
     try:
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -161,6 +178,10 @@ def resend_otp(request):
 
 
 def signin(request):
+    print(request.user)
+    if request.user is not None and request.user.is_authenticated:
+        messages.error(request, 'You are already signed in.')
+        return redirect('userhome')
     if request.method == 'POST':
         phone_number = request.POST['phone_number']
         password = request.POST['password']
@@ -211,7 +232,10 @@ def userprofile(request):
     
     phone_number = request.session.get('phone_number')
     #print (phone_number)
-    user_profile = UserProfile.objects.get(phone_number = phone_number)
+    print (request.user)
+    
+    user_profile = UserProfile.objects.get(user = request.user)
+    print(user_profile)
     user_profile.last_seen = timezone.now()
     context = {}
     form = None
@@ -240,8 +264,9 @@ def userprofile(request):
     doctor = Doctordata.objects.all()
     context['doctor'] = doctor
     
-    #user_profile.join_date = timezone.now()
-    #user_profile.last_seen = timezone.now()
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     if request.method == 'POST':
         up = None
         userdata = None
@@ -283,3 +308,36 @@ def userprofile(request):
         return render(request, 'signin/userprofile.html', context)
     else:
         return render(request, 'signin/doctorprofile.html', context)
+
+
+from django import template
+register = template.Library()
+
+@register.filter
+def round_decimal(value):
+    return round(value, 1)
+
+def rating(request, id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    
+    try:
+        user_profile = UserProfile.objects.get(user= request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
+    context = {}
+    context['user_profile'] = user_profile
+    context['id'] = id
+    data = Doctordata.objects.get(id = id)
+    context['data'] = data
+    if request.method == "POST":
+        doctor = Doctordata.objects.get(id=id)
+        rating = float(request.POST.get('rating'))
+        doctor.rating = ((doctor.rating * doctor.ratingcount) + rating) / (doctor.ratingcount + 1)
+        doctor.ratingcount += 1
+        doctor.save()
+        return redirect('doctor_detail', doctor_id=doctor.id)
+
+
+        
+    return render(request, 'signin/rating.html', context)

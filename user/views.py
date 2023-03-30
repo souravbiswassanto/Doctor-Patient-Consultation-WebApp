@@ -27,6 +27,7 @@ from request import forms as request_form
 from datetime import datetime
 
 def userhome(request):
+    
     context = {}
     doctors = Doctordata.objects.all()
     current_time = timezone.now()
@@ -35,6 +36,8 @@ def userhome(request):
     doctor = []
     upcoming_doctors = []
     for data in doctors:
+        if data.active_day is None:
+            continue
         print (current_time_dhaka.date(), data.active_day)
         print (current_time_dhaka.time(), data.active_time_start)
         if data.active_day == current_time_dhaka.date():
@@ -42,7 +45,10 @@ def userhome(request):
                 doctor.append(data)
     
     for data in doctors:
+        if data.active_day is None:
+            continue
         if data.active_day == current_time_dhaka.date():
+            
             if data.active_time_start >= current_time_dhaka.time() and current_time_dhaka.time() >= data.active_time_end:
                 upcoming_doctors.append(data)
         if data.active_day > current_time_dhaka.date():
@@ -62,6 +68,9 @@ def userhome(request):
     if request.user.is_authenticated:
         try:
             user_profile = UserProfile.objects.get(user=request.user, otp_verified=True)
+            if user_profile is not None:
+                user_profile.last_seen = timezone.now()
+                user_profile.save()
             print (user_profile)
             context['user_profile'] = user_profile
             if user_profile.is_sub:
@@ -87,6 +96,13 @@ def doctor_detail(request, doctor_id):
     
     sender_user = request.user
     sender_user_profile = UserProfile.objects.get(user = sender_user)
+    if sender_user_profile.role == "Doctor" or sender_user_profile.role == 'doctor':
+        messages.error(request, "Doctors can't send requests to doctors.")
+        return redirect('userhome')
+    
+    if sender_user_profile is not None:
+        sender_user_profile.last_seen = timezone.now()
+        sender_user_profile.save()
     doctordata = Doctordata.objects.get(id = doctor_id)
     
     doctor_user_profile = doctordata.user_profile
@@ -172,6 +188,9 @@ def createpatient(request):
     form = user_form.Patientform()
     context['form'] = form
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     context['user_profile'] = user_profile
     if Patient.objects.exists():
         context['ID'] = Patient.objects.last().id  + 1
@@ -202,6 +221,9 @@ def showpatients(request):
         return redirect('signin')
     
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     context['user_profile'] = user_profile
     patientlist = Patient.objects.filter(user_profile=user_profile).order_by('-created_at')
     context['patientlist'] = patientlist
@@ -229,6 +251,9 @@ def findin(request):
     else:
         user_profile = None
     context['user_profile'] = user_profile
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     if request.method == "POST":
         #print (request.POST['speciality'])
         spfind = request.POST.get('speciality')
@@ -288,7 +313,9 @@ def delete_patient(request, pt_id):
     context['user_profile'] = user_profile
     patientlist = Patient.objects.filter(user_profile=user_profile).order_by('-created_at')
     context['patientlist'] = patientlist
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     print (patientlist)
     return render(request, 'user/patientlist.html', context)
 
@@ -299,7 +326,9 @@ def patient_accepted(request):
     
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = Emgergency.objects.filter(user_profile=user_profile, status='Accepted')
     datas = []
     for ds in data:
@@ -323,7 +352,9 @@ def patient_pending(request):
     
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = Emgergency.objects.filter(user_profile=user_profile, status='Pending')
     datas = []
     for ds in data:
@@ -348,7 +379,9 @@ def patient_declined(request):
     
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = Emgergency.objects.filter(user_profile=user_profile, status='Declined')
     datas = []
     for ds in data:

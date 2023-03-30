@@ -42,7 +42,8 @@ class Doctordata(models.Model):
     active_time_end = models.TimeField(null = True, blank = True)
     active_day = models.DateField(blank = True, null = True)
     visits = models.IntegerField(blank = True, null = True)
-    rating = models.DecimalField(max_digits = 2, default = 0.0, decimal_places=1, blank = True, null = True)
+    rating = models.FloatField(default=0.0, blank = True, null = True)
+    ratingcount = models.IntegerField(default=0, blank = True, null= True)
     def __str__(self):
         return self.name
     

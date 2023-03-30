@@ -30,8 +30,36 @@ from meeting.models import *
 from meeting.views import *
 from request import forms as request_form
 from datetime import datetime
+from django.shortcuts import render, redirect
+from . import forms
+import pytz
+from user.models import *
+from doctor.models import *
+import random
+from django.http import JsonResponse
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import UserProfile
+from django.contrib.auth import authenticate, login
+from django.conf import settings
+from django.utils import timezone
+from pytz import timezone as pytz_timezone
+from django.contrib import messages
+from meeting import forms as meeting_form
+from user import forms as user_form
+from doctor import forms as doctor_form
+from doctor.models import *
+from meeting.models import *
+from auth.models import *
+from request.models import *
+from meeting.models import *
+
+from request import forms as request_form
+from datetime import datetime
 
 def home(request):
+    
     print (settings.DEFAULT_IMAGE)
     doctors = Doctordata.objects.all()
     paginator = Paginator(doctors, 2) # set 10 doctors per page
@@ -71,7 +99,9 @@ def doctor_accepted(request):
     
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = Emgergency.objects.filter(doctor_profile = user_profile, status='Accepted')
     datas = []
     for ds in data:
@@ -99,6 +129,9 @@ def doctor_pending(request):
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
     patientlist = []
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     
     data = Emgergency.objects.filter(doctor_profile=user_profile, status='Pending')
     datas = []
@@ -128,7 +161,9 @@ def doctor_declined(request):
     
     user_profile = UserProfile.objects.get(user=request.user)
     context['user_profile'] = user_profile
-    
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = Emgergency.objects.filter(doctor_profile = user_profile, status='Declined')
     datas = []
     for ds in data:

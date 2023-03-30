@@ -51,6 +51,9 @@ def paynow(request, fees, patid, docid, meetid):
     if not request.user.is_authenticated:
         return redirect('signin')
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     if user_profile.role == "Doctor" or user_profile.role == "doctor":
         return redirect('scheduled_meeting')
     
@@ -122,6 +125,9 @@ def payforsub(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     if user_profile.is_sub:
         messages.success(request, 'you are already a subscriber')
         return redirect('userhome')

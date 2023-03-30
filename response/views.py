@@ -42,6 +42,9 @@ def scheduled_meeting(request):
         return redirect('signin')
     
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     context = {}
     context['user_profile'] = user_profile
     role = user_profile.role
@@ -78,21 +81,46 @@ def room(request):
     context = {}
     ptid = request.POST.get('patientfileid')
     mtid = request.POST.get('meetingfileid')
-    print (ptid, mtid)
-    print(type(ptid), type(mtid))
+    
     if ptid == None or mtid == None:
         messages.error(request, 'You should enter the meetingid and patientid correctly')
-        return redirect('userprofile')
+        return redirect('openroom')
     patientid = int(ptid)
     meetingid = int(mtid) 
     context['patientfileid'] = ptid
     context['meetingfileid'] = mtid 
     user_profile = UserProfile.objects.get(user = request.user)
     context['user_profile'] = user_profile
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     data = None
     value = request.POST.get('firsttime')
-    print ('type = ', type(value), value)
-    print (value, "hellow value how are you")
+    try:
+        responseobj = Response.objects.get(id = meetingid)
+    except Response.DoesNotExist:
+        responseobj = None
+    if responseobj == None:
+        messages.error(request, 'Meeting id does not exist')
+        return redirect('openroom')
+    print(responseobj.topic)
+    
+    if user_profile != responseobj.user_profile and responseobj.doctor_profile != user_profile:
+        messages.error(request, 'You do not have the right to visit this page')
+        return redirect('openroom')
+    try:
+        tp = Patient.objects.get(id = patientid)
+    except Patient.DoesNotExist:
+        tp = None
+    if tp == None:
+        messages.error(request, 'Patient Do not exist')
+        return redirect('openroom')
+    if responseobj.patient_profile != tp:
+        messages.error(request, 'You do not have the right to visit this page')
+        return redirect('openroom')
+    
+    print(request.method)
+    
     if request.method == 'POST' and not value == '1':
         form = res_form.FileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -124,6 +152,9 @@ def openroom(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     user_profile = UserProfile.objects.get(user = request.user)
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
     context = {}
     context['user_profile'] = user_profile
     return render(request, 'response/openroom.html', context)
@@ -131,12 +162,24 @@ def openroom(request):
 def dltfile(request, file_id, ptid, mtid):
     if not request.user.is_authenticated:
         return redirect('signin')
-    
-    user_profile = UserProfile.objects.get(user = request.user)
+    try:
+        
+        user_profile = UserProfile.objects.get(user = request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
+    if user_profile is not None:
+        user_profile.last_seen = timezone.now()
+        user_profile.save()
+    else:
+        return redirect('room')
     context = {}
     context['user_profile'] = user_profile
-    obj = PatientFile.objects.get(id = int(file_id))
-    
+    try:
+        obj = PatientFile.objects.get(id = int(file_id))
+    except PatientFile.DoesNotExist:
+        obj = None
+    if obj == None:
+        return redirect('room')
     context['patientfileid'] = ptid
     context['meetingfileid'] = mtid
     context['firsttime'] = "1"

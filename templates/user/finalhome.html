@@ -104,17 +104,14 @@ home
   <section id="services" class="services">
     <div class="container" data-aos="fade-up">
       {% if messages %}
-      <div
-        class="alert alert-dismissible alert-danger {% for message in messages %}alert-{{ message.tags }}{% endfor %}"
-        role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         {% for message in messages %}
         <p class="mb-0">{{ message }}</p>
         {% endfor %}
       </div>
       {% endif %}
+
       <div class="section-title" id="consultnow">
         <h2>Reviver</h2>
         <p>Active Doctors</p>
@@ -196,6 +193,7 @@ home
             <div class="doctor-module" data-id="{{ data.id }}">
               <span>Will able to take requests from:</span>
               <p><span class="active-time">{{ data.active_time_start }} - {{ data.active_time_end }} </span></p>
+              <span>Date: {{ data.active_day }}</span>
               <div class="countdown-timer"></div>
             </div>
             <button class="btn btn-danger"><a href="{% url 'doctor_detail' doctor_id=data.id %}">Consult
